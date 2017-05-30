@@ -1,0 +1,38 @@
+[
+  {
+    "id": "cpp-types",
+    "title": "C++ types",
+    "tags": ["C++"],
+    "data": "Data is stored in many different ways. The language supports many basic types like boolean, char and int and many more (TODO: add reference). Furthermore, the C++ let you create types with keywords `struct` or `class`."
+  },{
+    "id": "user-defined-types",
+    "title": "User Defined Type",
+    "tags": ["C++", "class"],
+    "data": "Users can define a new class (or struct) to organize information. For example, if you wanted to organize location data, you may want to create a class called Location, like so: `class Location { public: double d_latitute; double d_longitude; };` The Location class is composed of a latitude and longitude data. You could enhance the Location class so that it only has valid longitude and latitude values (instead of any old number). You can write code that operates at the level of locations instead of raw numbers (ie. `Location a; Location b; ... if (a.isWithin10Miles(b)) {...} ;`. Thinking at higher levels allows you to build complex things without getting confused by lower level nitty gritty details."
+  },{
+    "id": "fundamental-types",
+    "title": "Fundamental Types",
+    "tags": ["C++"],
+    "data": "The C++ language supplies a number of fundamental data types: void, boolean, character, integer, ..."
+  },{
+    "id": "wchar-t",
+    "title": "Wide char",
+    "tags": ["C++"],
+    "data": "A data type that is big enough to hold any character code (32 bit for Unicode or 16 bit for UTF-16)."
+  },{
+    "id": "source-code",
+    "title": "Source code",
+    "tags": ["C++"],
+    "data": "It starts here. You enter text, aka source code, into a text editor. The C++ compiler will translate that into machine code." 
+  },{
+    "id": "static-library",
+    "title": "Static Library",
+    "tags": ["C++"],
+    "data": "Code can be converted into static library. TODO: highlight difference with dynamic library."
+  },{
+    "id": "dynamic-library",
+    "title": "Dynamic Library",
+    "tags": ["C++"],
+    "data": "Code can be converted into dynamic library. TODO: highlight difference with static library."
+  }
+]

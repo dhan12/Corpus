@@ -1,0 +1,11 @@
+[
+    {
+        "id": "learning-cpp",
+        "title": "Learning C++",
+        "tags": ["C++"],
+        "data": "Use this to study and learn C++",
+        "members": ["cpp-types", "user-defined-types", "fundamental-types",
+                    "wchar-t", 
+                    "source-code", "static-library", "dynamic-library"]
+    }
+]

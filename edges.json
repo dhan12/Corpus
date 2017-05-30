@@ -1,0 +1,29 @@
+[
+  {
+    "a": "fundamental-types",
+    "b": "cpp-types",
+    "relationship": "directional",
+    "description": "is a type of"
+  },{
+    "a": "user-defined-types",
+    "b": "cpp-types",
+    "relationship": "directional",
+    "description": "is a type of"
+  },{
+    "a": "wchar-t",
+    "b": "fundamental-types",
+    "relationship": "directional",
+    "description": "is a type of"
+  },{
+    "a": "source-code",
+    "b": "static-library",
+    "relationship": "directional",
+    "description": "is converted into"
+  },{
+    "a": "source-code",
+    "b": "dynamic-library",
+    "relationship": "directional",
+    "description": "is converted into"
+  }
+]
+

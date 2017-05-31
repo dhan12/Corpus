@@ -34,5 +34,10 @@
     "title": "Dynamic Library",
     "tags": ["C++"],
     "data": "Code can be converted into dynamic library. TODO: highlight difference with static library."
+  },{
+    "id": "keywords",
+    "title": "Keywords",
+    "tags": ["C++"],
+    "data": "There are a number of reserved keywords in C++. They have special meaning and cannot be used as variables or overloading."
   }
 ]

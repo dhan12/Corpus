@@ -99,30 +99,39 @@ def printGraph(g):
 
 def printOptions():
     print 'Choose option:'
-    print "1 or 'b' to show boards"
-    print "2 or 'e' to show edges"
-    print "3 or 'n' to show nodes"
-    print "4 or 'g' to show graph"
-    print "5 or 'q' to quit"
+    print "'b' to show boards"
+    print "'e' to show edges"
+    print "'n' to show nodes"
+    print "'g' to show graph"
+    print "'r' to reload data"
+    print "'q' to quit"
 
-if __name__ == '__main__':
+def loadData():
     boards = initBoards()
     edges = initEdges()
     nodes, nodeMap = initNodes()
-
     g = Graph(nodeMap, edges)
+    return boards, edges, nodes, nodeMap, g
+
+if __name__ == '__main__':
+
+    boards, edges, nodes, nodeMap, g = loadData()
+
     while True:
         printOptions()
         line = sys.stdin.readline()[:-1]
-        if line == '1' or line == 'b':
+        if line == 'b':
             printBoards(boards)
-        if line == '2' or line == 'e':
+        if line == 'e':
             printEdges(boards, nodes, nodeMap, edges)
-        if line == '3' or line == 'n':
+        if line == 'n':
             printNodes(boards, nodes)
-        if line == '4' or line == 'g':
+        if line == 'g':
             printGraph(g)
-        if line == '5' or line == 'q':
+        if line == 'r':
+            boards, edges, nodes, nodeMap, g = loadData()
+            print 'Data reloaded'
+        if line == 'q':
             break
             
 

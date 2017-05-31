@@ -80,14 +80,22 @@ def printEdges(boards, nodes, nodeMap, edges):
                         (n['title'], e['description'], nodeMap[e['b']]['title'])
             seenNodes.add(n['id'])
 
-def printNodes(boards, nodes):
+def printNodes(boards, nodeMap):
+    seenNodes = set()
+
     numBoards = len(boards)
     for i in range(numBoards):
         print 'For board "%s":' % boards[i]['title']
-        for n in nodes:
-            if n['id'] in boards[i]['members']:
+        for n in nodeMap:
+            if n in boards[i]['members']:
+                item = nodeMap[n]
                 print '  %s (%s) - %s ...' % \
-                      (n['title'], n['id'], n['data'][:25])
+                      (item['title'], item['id'], item['data'][:25])
+                seenNodes.add(n)
+
+    orphanedNodes = [n for n in nodeMap if n not in seenNodes]
+    if len(orphanedNodes) > 0:
+        print 'Items not on a board:\n  %s' % ('\n  '.join(orphanedNodes))
 
 
 def printGraph(g):
@@ -125,7 +133,7 @@ if __name__ == '__main__':
         if line == 'e':
             printEdges(boards, nodes, nodeMap, edges)
         if line == 'n':
-            printNodes(boards, nodes)
+            printNodes(boards, nodeMap)
         if line == 'g':
             printGraph(g)
         if line == 'r':

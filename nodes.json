@@ -39,5 +39,20 @@
     "title": "Keywords",
     "tags": ["C++"],
     "data": "There are a number of reserved keywords in C++. They have special meaning and cannot be used as variables or overloading."
+  },{
+    "id": "inline",
+    "title": "inline",
+    "tags": ["C++"],
+    "data": "."
+  },{
+    "id": "static",
+    "title": "static",
+    "tags": ["C++"],
+    "data": "."
+  },{
+    "id": "extern",
+    "title": "extern",
+    "tags": ["C++"],
+    "data": "."
   }
 ]

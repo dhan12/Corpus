@@ -3,6 +3,27 @@
 import json
 import sys
 
+class GraphNode():
+    def __init__(self, nodeId):
+        self.id = nodeId
+        self.neighbors = []
+
+class Graph():
+    def __init__(self, nodes, edges):
+        ''' Construct a graph from nodes and edges
+        
+        @args nodes dictionary of nodes
+        @args edges between nodes
+        '''
+        graphNodes = {}
+
+        for n in nodes:
+            graphNodes[n] = GraphNode(n)
+
+        for e in edges:
+            graphNodes[e['a']].neighbors.append(e['b'])
+
+        self.nodes = graphNodes
 
 def initBoards():
     with open('./boards.json', 'r') as input:
@@ -69,18 +90,27 @@ def printNodes(boards, nodes):
                       (n['title'], n['id'], n['data'][:25])
 
 
+def printGraph(g):
+    for n in g.nodes:
+        print '%s --' % (n,)
+        for neighbor in g.nodes[n].neighbors:
+            print '  - %s' % (neighbor,)
+
+
 def printOptions():
     print 'Choose option:'
     print "1 or 'b' to show boards"
     print "2 or 'e' to show edges"
     print "3 or 'n' to show nodes"
-    print "4 or 'q' to quit"
+    print "4 or 'g' to show graph"
+    print "5 or 'q' to quit"
 
 if __name__ == '__main__':
     boards = initBoards()
     edges = initEdges()
     nodes, nodeMap = initNodes()
 
+    g = Graph(nodeMap, edges)
     while True:
         printOptions()
         line = sys.stdin.readline()[:-1]
@@ -90,7 +120,9 @@ if __name__ == '__main__':
             printEdges(boards, nodes, nodeMap, edges)
         if line == '3' or line == 'n':
             printNodes(boards, nodes)
-        if line == '4' or line == 'q':
+        if line == '4' or line == 'g':
+            printGraph(g)
+        if line == '5' or line == 'q':
             break
             
 

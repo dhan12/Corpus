@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import json
+import os
 import sys
 
 class GraphNode():
@@ -25,32 +26,31 @@ class Graph():
 
         self.nodes = graphNodes
 
-def initBoards():
+def initData(dataDir):
     boards = []
-    with open('../Corpus-cpp-data/boards.json', 'r') as input:
-        data = json.loads(input.read())
-        if 'boards' in data:
-            boards += data['boards']
-    return boards
-
-
-def initEdges():
     edges = []
-    with open('../Corpus-cpp-data/edges.json', 'r') as input:
-        data = json.loads(input.read())
-        if 'edges' in data:
-            edges += data['edges']
-    return edges
-
-def initNodes():
+    nodes = []
     nodeMap = {}
-    with open('../Corpus-cpp-data/nodes.json', 'r') as input:
-        data = json.loads(input.read())
-        if 'nodes' in data:
-            nodes = data['nodes']
-            for n in nodes:
-                nodeMap[n['id']] = n
-    return nodeMap
+
+    for filename in os.listdir(dataDir):
+        inputFile = os.path.join(dataDir, filename)
+        with open(inputFile, 'r') as input:
+            try:
+                data = json.loads(input.read())
+            except ValueError as e:
+                print 'Failed to load' + inputFile
+                continue
+            if 'boards' in data:
+                boards += data['boards']
+
+            if 'edges' in data:
+                edges += data['edges']
+
+            if 'nodes' in data:
+                nodes = data['nodes']
+    for n in nodes:
+        nodeMap[n['id']] = n
+    return boards, nodeMap, edges
 
 
 def printBoards(boards):
@@ -120,9 +120,7 @@ def printOptions():
     print "'q' to quit"
 
 def loadData():
-    boards = initBoards()
-    edges = initEdges()
-    nodeMap = initNodes()
+    boards, nodeMap, edges = initData('../Corpus-cpp-data/')
     g = Graph(nodeMap, edges)
     return boards, edges, nodeMap, g
 

@@ -44,14 +44,13 @@ def initEdges():
 
 def initNodes():
     nodeMap = {}
-    nodes = []
     with open('../Corpus-cpp-data/nodes.json', 'r') as input:
         data = json.loads(input.read())
         if 'nodes' in data:
-            nodes += data['nodes']
-        for n in nodes:
-            nodeMap[n['id']] = n
-    return nodes, nodeMap
+            nodes = data['nodes']
+            for n in nodes:
+                nodeMap[n['id']] = n
+    return nodeMap
 
 
 def printBoards(boards):
@@ -62,7 +61,7 @@ def printBoards(boards):
                 join([nodeMap[n]['title'] for n in boards[i]['members']])
 
 
-def printEdges(boards, nodes, nodeMap, edges):
+def printEdges(boards, nodeMap, edges):
     print 'Edges:'
     numBoards = len(boards)
 
@@ -123,13 +122,13 @@ def printOptions():
 def loadData():
     boards = initBoards()
     edges = initEdges()
-    nodes, nodeMap = initNodes()
+    nodeMap = initNodes()
     g = Graph(nodeMap, edges)
-    return boards, edges, nodes, nodeMap, g
+    return boards, edges, nodeMap, g
 
 if __name__ == '__main__':
 
-    boards, edges, nodes, nodeMap, g = loadData()
+    boards, edges, nodeMap, g = loadData()
 
     while True:
         printOptions()
@@ -137,13 +136,13 @@ if __name__ == '__main__':
         if line == 'b':
             printBoards(boards)
         if line == 'e':
-            printEdges(boards, nodes, nodeMap, edges)
+            printEdges(boards, nodeMap, edges)
         if line == 'n':
             printNodes(boards, nodeMap)
         if line == 'g':
             printGraph(g)
         if line == 'r':
-            boards, edges, nodes, nodeMap, g = loadData()
+            boards, edges, nodeMap, g = loadData()
             print 'Data reloaded'
         if line == 'q':
             break

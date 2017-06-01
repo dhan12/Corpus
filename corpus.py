@@ -26,20 +26,29 @@ class Graph():
         self.nodes = graphNodes
 
 def initBoards():
-    with open('./boards.json', 'r') as input:
-        boards = json.loads(input.read())
+    boards = []
+    with open('../Corpus-cpp-data/boards.json', 'r') as input:
+        data = json.loads(input.read())
+        if 'boards' in data:
+            boards += data['boards']
     return boards
 
 
 def initEdges():
-    with open('./edges.json', 'r') as input:
-        edges = json.loads(input.read())
+    edges = []
+    with open('../Corpus-cpp-data/edges.json', 'r') as input:
+        data = json.loads(input.read())
+        if 'edges' in data:
+            edges += data['edges']
     return edges
 
 def initNodes():
     nodeMap = {}
-    with open('./nodes.json', 'r') as input:
-        nodes = json.loads(input.read())
+    nodes = []
+    with open('../Corpus-cpp-data/nodes.json', 'r') as input:
+        data = json.loads(input.read())
+        if 'nodes' in data:
+            nodes += data['nodes']
         for n in nodes:
             nodeMap[n['id']] = n
     return nodes, nodeMap
@@ -54,31 +63,28 @@ def printBoards(boards):
 
 
 def printEdges(boards, nodes, nodeMap, edges):
+    print 'Edges:'
     numBoards = len(boards)
-    for i in range(numBoards):
-        print 'For board "%s":' % boards[i]['title']
 
-        # Print board relationships
-        seenNodes = set()
-        for n in nodes:
+    # Print board relationships
+    seenNodes = set()
+    for n in nodeMap:
+        item = nodeMap[n]
 
-            if n['id'] not in boards[i]['members']:
+        for e in edges:
+            if e['a'] in seenNodes or e['b'] in seenNodes:
                 continue
 
-            for e in edges:
-                if e['a'] in seenNodes or e['b'] in seenNodes:
-                    continue
-
-                if (e['relationship'] == 'directional' and e['a'] == n['id']):
-                    print '  %s -- %s --> %s' % \
-                        (n['title'], e['description'], nodeMap[e['b']]['title'])
-                elif (e['relationship'] == 'directional' and e['b'] == n['id']):
-                    print '  %s -- %s --> %s' % \
-                        (nodeMap[e['a']]['title'], e['description'], n['title'])
-                elif (e['a'] == n['id'] or e['b'] == n['id']):
-                    print '  %s -- %s --  %s' % \
-                        (n['title'], e['description'], nodeMap[e['b']]['title'])
-            seenNodes.add(n['id'])
+            if (e['relationship'] == 'directional' and e['a'] == n):
+                print '  %s -- %s --> %s' % \
+                    (item['title'], e['description'], nodeMap[e['b']]['title'])
+            elif (e['relationship'] == 'directional' and e['b'] == n):
+                print '  %s -- %s --> %s' % \
+                    (nodeMap[e['a']]['title'], e['description'], item['title'])
+            elif (e['a'] == n or e['b'] == n):
+                print '  %s -- %s --  %s' % \
+                    (item['title'], e['description'], nodeMap[e['b']]['title'])
+        seenNodes.add(n)
 
 def printNodes(boards, nodeMap):
     seenNodes = set()

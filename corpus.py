@@ -3,28 +3,10 @@
 import json
 import os
 import sys
+from graph import Graph
+from layout import Layout
+from position import Position
 
-class GraphNode():
-    def __init__(self, nodeId):
-        self.id = nodeId
-        self.neighbors = []
-
-class Graph():
-    def __init__(self, nodes, edges):
-        ''' Construct a graph from nodes and edges
-        
-        @args nodes dictionary of nodes
-        @args edges between nodes
-        '''
-        graphNodes = {}
-
-        for n in nodes:
-            graphNodes[n] = GraphNode(n)
-
-        for e in edges:
-            graphNodes[e['a']].neighbors.append(e['b'])
-
-        self.nodes = graphNodes
 
 def initData(dataDir):
     boards = []
@@ -57,7 +39,7 @@ def printBoards(boards):
     numBoards = len(boards)
     for i in range(numBoards):
         print 'Board title: ' + boards[i]['title']
-        print 'Board members:\n  ' + '\n  '. \
+        print 'Board members: ' + ', '. \
                 join([nodeMap[n]['title'] for n in boards[i]['members']])
 
 
@@ -76,13 +58,13 @@ def printEdges(boards, nodeMap, edges):
 
             if (e['relationship'] == 'directional' and e['a'] == n):
                 print '  %s -- %s --> %s' % \
-                    (item['title'], e['description'], nodeMap[e['b']]['title'])
+                        (item['title'], e['description'], nodeMap[e['b']]['title'])
             elif (e['relationship'] == 'directional' and e['b'] == n):
                 print '  %s -- %s --> %s' % \
-                    (nodeMap[e['a']]['title'], e['description'], item['title'])
+                        (nodeMap[e['a']]['title'], e['description'], item['title'])
             elif (e['a'] == n or e['b'] == n):
                 print '  %s -- %s --  %s' % \
-                    (item['title'], e['description'], nodeMap[e['b']]['title'])
+                        (item['title'], e['description'], nodeMap[e['b']]['title'])
         seenNodes.add(n)
 
 def printNodes(boards, nodeMap):
@@ -95,20 +77,50 @@ def printNodes(boards, nodeMap):
             if n in boards[i]['members']:
                 item = nodeMap[n]
                 print '  %s (%s) - %s ...' % \
-                      (item['title'], item['id'], item['data'][:25])
+                        (item['title'], item['id'], item['data'][:25].replace('\n',' '))
                 seenNodes.add(n)
 
     orphanedNodes = [n for n in nodeMap if n not in seenNodes]
     if len(orphanedNodes) > 0:
-        print 'Items not on a board:\n  %s' % ('\n  '.join(orphanedNodes))
+        print 'Items not on a board:'
+    for n in orphanedNodes:
+        item = nodeMap[n]
+        print '  %s (%s) - %s ...' % \
+                (item['title'], item['id'], item['data'][:25].replace('\n',' '))
+
+
 
 
 def printGraph(g):
-    for n in g.nodes:
-        print '%s --' % (n,)
-        for neighbor in g.nodes[n].neighbors:
-            print '  - %s' % (neighbor,)
+    layout = Layout()
 
+    for n in g.nodes:
+        layout.add(n, g.nodes)
+
+    for p in layout.positionToNodeMap:
+        print p, layout.positionToNodeMap[p]
+
+    for n in g.nodes:
+        node = g.nodes[n]
+        for neighbor in node.neighbors:
+            print layout.nodeToPositionMap[n], layout.nodeToPositionMap[neighbor]
+
+    '''
+    y = layout._min_y
+    while y <= layout._max_y:
+        items = []
+        x = layout._min_x
+        while x <= layout._max_x:
+            p = Position(x, y)
+            try:
+                nodeId = layout.positionToNodeMap[p] 
+                items.append(nodeId.ljust(20))
+            except KeyError:
+                items.append(''.ljust(20))
+            x = x + 1
+        print '  '.join(items)
+        y = y + 1
+    '''
 
 def printOptions():
     print 'Choose option:'
@@ -144,6 +156,6 @@ if __name__ == '__main__':
             print 'Data reloaded'
         if line == 'q':
             break
-            
+
 
 

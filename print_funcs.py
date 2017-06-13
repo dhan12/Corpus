@@ -1,4 +1,5 @@
 import layout
+import position
 
 
 def printOptions():
@@ -16,7 +17,7 @@ def printBoards(boards):
     for i in range(numBoards):
         print 'Board title: ' + boards[i]['title']
         print 'Board members: ' + ', '. \
-                join([nodeMap[n]['title'] for n in boards[i]['members']])
+            join([nodeMap[n]['title'] for n in boards[i]['members']])
 
 
 def printEdges(boards, nodeMap, edges):
@@ -34,13 +35,13 @@ def printEdges(boards, nodeMap, edges):
 
             if (e['relationship'] == 'directional' and e['a'] == n):
                 print '  %s -- %s --> %s' % \
-                        (item['title'], e['description'], nodeMap[e['b']]['title'])
+                    (item['title'], e['description'], nodeMap[e['b']]['title'])
             elif (e['relationship'] == 'directional' and e['b'] == n):
                 print '  %s -- %s --> %s' % \
-                        (nodeMap[e['a']]['title'], e['description'], item['title'])
+                    (nodeMap[e['a']]['title'], e['description'], item['title'])
             elif (e['a'] == n or e['b'] == n):
                 print '  %s -- %s --  %s' % \
-                        (item['title'], e['description'], nodeMap[e['b']]['title'])
+                    (item['title'], e['description'], nodeMap[e['b']]['title'])
         seenNodes.add(n)
 
 
@@ -54,7 +55,8 @@ def printNodes(boards, nodeMap):
             if n in boards[i]['members']:
                 item = nodeMap[n]
                 print '  %s (%s) - %s ...' % \
-                        (item['title'], item['id'], item['data'][:25].replace('\n',' '))
+                    (item['title'], item['id'],
+                     item['data'][:25].replace('\n', ' '))
                 seenNodes.add(n)
 
     orphanedNodes = [n for n in nodeMap if n not in seenNodes]
@@ -63,7 +65,7 @@ def printNodes(boards, nodeMap):
     for n in orphanedNodes:
         item = nodeMap[n]
         print '  %s (%s) - %s ...' % \
-                (item['title'], item['id'], item['data'][:25].replace('\n',' '))
+            (item['title'], item['id'], item['data'][:25].replace('\n', ' '))
 
 
 def printGraph(g):
@@ -78,21 +80,20 @@ def printGraph(g):
     for n in g.nodes:
         node = g.nodes[n]
         for neighbor in node.neighbors:
-            print _layout.nodeToPositionMap[n], _layout.nodeToPositionMap[neighbor]
+            print _layout.nodeToPositionMap[n], \
+                _layout.nodeToPositionMap[neighbor]
 
-    '''
-    y = layout._min_y
-    while y <= layout._max_y:
+    y = _layout._min_y
+    while y <= _layout._max_y:
         items = []
-        x = layout._min_x
-        while x <= layout._max_x:
-            p = Position(x, y)
+        x = _layout._min_x
+        while x <= _layout._max_x:
+            p = position.Position(x, y)
             try:
-                nodeId = layout.positionToNodeMap[p] 
-                items.append(nodeId.ljust(20))
+                nodeId = _layout.positionToNodeMap[p]
+                items.append(nodeId[:20].ljust(20))
             except KeyError:
                 items.append(''.ljust(20))
             x = x + 1
         print '  '.join(items)
         y = y + 1
-    '''

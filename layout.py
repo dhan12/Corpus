@@ -1,6 +1,6 @@
 from random import shuffle
-
 from position import Position
+
 
 class Layout:
     def __init__(self):
@@ -27,7 +27,6 @@ class Layout:
         for neighborId in nodes[nodeId].neighbors:
             self.addNeighbor(nodeId, neighborId, nodes)
 
-
     def addNeighbor(self, originId, neighborId, nodes):
         if self.hasNode(neighborId):
             return
@@ -44,27 +43,26 @@ class Layout:
 
     def _getAllShifts(self, distance):
         if distance == 0:
-            return [Position(0,0)]
+            return [Position(0, 0)]
         if distance == 1:
-            return [Position(0,-1), 
-                    Position(0,1), 
-                    Position(1,0), 
-                    Position(1,1),
-                    Position(1,-1),
-                    Position(-1,0),
-                    Position(-1,1),
-                    Position(-1,-1)]
-
+            return [Position(0, -1),
+                    Position(0, 1),
+                    Position(1, 0),
+                    Position(1, 1),
+                    Position(1, -1),
+                    Position(-1, 0),
+                    Position(-1, 1),
+                    Position(-1, -1)]
 
     def _choosePosition(self, startingPosition=None):
         if startingPosition is None:
-            startingPosition = Position(0,0)
+            startingPosition = Position(0, 0)
 
         if startingPosition not in self.positionToNodeMap:
             self._updateBounds(startingPosition)
             return startingPosition
 
-        distance = 1 
+        distance = 1
         shifts = self._getAllShifts(distance)
         shuffle(shifts)
 
@@ -83,11 +81,14 @@ class Layout:
         return p
 
     def _updateBounds(self, p):
-        if p.x > self._max_x: self._max_x = p.x
-        if p.x < self._min_x: self._min_x = p.x
-        if p.y < self._min_y: self._min_y = p.y
-        if p.y > self._max_y: self._max_y = p.y
+        if p.x > self._max_x:
+            self._max_x = p.x
+        if p.x < self._min_x:
+            self._min_x = p.x
+        if p.y < self._min_y:
+            self._min_y = p.y
+        if p.y > self._max_y:
+            self._max_y = p.y
 
         self._width = self._max_x - self._min_x
         self._length = self._max_y - self._min_y
-

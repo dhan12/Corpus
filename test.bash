@@ -20,6 +20,11 @@ if [ $rc -eq 0 ]; then
     rc=$?
 fi
 
+if [ 0 -eq 1 ]; then
+    pip install autopep8
+    autopep8 --in-place *.py tests/*.py
+fi
+
 deactivate
 
 exit $rc

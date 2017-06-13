@@ -3,6 +3,7 @@ class GraphNode():
         self.id = nodeId
         self.neighbors = []
 
+
 class Graph():
     def __init__(self, nodes, edges):
         ''' Construct a graph from nodes and edges
@@ -19,4 +20,3 @@ class Graph():
             graphNodes[e['a']].neighbors.append(e['b'])
 
         self.nodes = graphNodes
-

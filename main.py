@@ -61,6 +61,3 @@ if __name__ == '__main__':
             print 'Data reloaded'
         if line == 'q':
             break
-
-
-

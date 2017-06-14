@@ -83,11 +83,11 @@ def printGraph(g):
             print _layout.nodeToPositionMap[n], \
                 _layout.nodeToPositionMap[neighbor]
 
-    y = _layout._min_y
-    while y <= _layout._max_y:
+    y = _layout.min_y
+    while y <= _layout.max_y:
         items = []
-        x = _layout._min_x
-        while x <= _layout._max_x:
+        x = _layout.min_x
+        while x <= _layout.max_x:
             p = position.Position(x, y)
             try:
                 nodeId = _layout.positionToNodeMap[p]

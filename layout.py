@@ -10,10 +10,10 @@ class Layout:
         self.positionToNodeMap = {}
         self.nodeToPositionMap = {}
 
-        self._min_x = 0
-        self._max_x = 0
-        self._min_y = 0
-        self._max_y = 0
+        self.min_x = 0
+        self.max_x = 0
+        self.min_y = 0
+        self.max_y = 0
 
         self._width = 0
         self._length = 0
@@ -89,14 +89,14 @@ class Layout:
         miny = p.y - DIST_TO_BORDER
         maxy = p.y + DIST_TO_BORDER
 
-        if maxx > self._max_x:
-            self._max_x = maxx
-        if minx < self._min_x:
-            self._min_x = minx
-        if miny < self._min_y:
-            self._min_y = miny
-        if maxy > self._max_y:
-            self._max_y = maxy
+        if maxx > self.max_x:
+            self.max_x = maxx
+        if minx < self.min_x:
+            self.min_x = minx
+        if miny < self.min_y:
+            self.min_y = miny
+        if maxy > self.max_y:
+            self.max_y = maxy
 
-        self._width = self._max_x - self._min_x
-        self._length = self._max_y - self._min_y
+        self._width = self.max_x - self.min_x
+        self._length = self.max_y - self.min_y

@@ -15,4 +15,4 @@ class Position:
         return str(self.x).rjust(3) + ' ' + str(self.y).rjust(3)
 
     def __repr__(self):
-        return str(self.x).rjust(3) + ' ' + str(self.y).rjust(3)
+        return 'Position(%d, %d)' % (self.x, self.y)

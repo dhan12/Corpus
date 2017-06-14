@@ -19,7 +19,7 @@ class Layout:
         self._length = 0
 
     def add(self, nodeId, nodes):
-        if self.hasNode(nodeId):
+        if self._hasNode(nodeId):
             return
 
         p = self._choosePosition()
@@ -27,10 +27,10 @@ class Layout:
         self.nodeToPositionMap[nodeId] = p
 
         for neighborId in nodes[nodeId].neighbors:
-            self.addNeighbor(nodeId, neighborId, nodes)
+            self._addNeighbor(nodeId, neighborId, nodes)
 
-    def addNeighbor(self, originId, neighborId, nodes):
-        if self.hasNode(neighborId):
+    def _addNeighbor(self, originId, neighborId, nodes):
+        if self._hasNode(neighborId):
             return
 
         p = self._choosePosition()
@@ -38,16 +38,16 @@ class Layout:
         self.nodeToPositionMap[neighborId] = p
 
         for n2 in nodes[neighborId].neighbors:
-            self.addNeighbor(neighborId, n2, nodes)
+            self._addNeighbor(neighborId, n2, nodes)
 
-    def hasNode(self, nodeId):
+    def _hasNode(self, nodeId):
         return nodeId in self.nodeToPositionMap
 
     def _getAllShifts(self, distance):
         if distance == 0:
             return [Position(0, 0)]
         if distance == 1:
-            distance = (2 * DIST_TO_BORDER) + DIST_BETWEEN_NODES
+            distance = (2 * DIST_TO_BORDER) + DIST_BETWEEN_NODES + 1
             return [Position(distance, 0),
                     Position(0, -1 * distance),
                     Position(-1 * distance, 0),
@@ -65,6 +65,7 @@ class Layout:
             self._updateBounds(startingPosition)
             return startingPosition
 
+        # TODO: increase distance until a point is found
         distance = 1
         shifts = self._getAllShifts(distance)
 
@@ -83,14 +84,19 @@ class Layout:
         return p
 
     def _updateBounds(self, p):
-        if p.x > self._max_x:
-            self._max_x = p.x
-        if p.x < self._min_x:
-            self._min_x = p.x
-        if p.y < self._min_y:
-            self._min_y = p.y
-        if p.y > self._max_y:
-            self._max_y = p.y
+        minx = p.x - DIST_TO_BORDER
+        maxx = p.x + DIST_TO_BORDER
+        miny = p.y - DIST_TO_BORDER
+        maxy = p.y + DIST_TO_BORDER
+
+        if maxx > self._max_x:
+            self._max_x = maxx
+        if minx < self._min_x:
+            self._min_x = minx
+        if miny < self._min_y:
+            self._min_y = miny
+        if maxy > self._max_y:
+            self._max_y = maxy
 
         self._width = self._max_x - self._min_x
         self._length = self._max_y - self._min_y

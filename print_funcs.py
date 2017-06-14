@@ -91,9 +91,9 @@ def printGraph(g):
             p = position.Position(x, y)
             try:
                 nodeId = _layout.positionToNodeMap[p]
-                items.append(nodeId[:20].ljust(20))
+                items.append(nodeId[:5])
             except KeyError:
-                items.append(''.ljust(20))
+                items.append(' ')
             x = x + 1
-        print '  '.join(items)
+        print ''.join(items)
         y = y + 1

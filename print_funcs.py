@@ -83,6 +83,11 @@ def printGraph(g):
             print _layout.nodeToPositionMap[n], \
                 _layout.nodeToPositionMap[neighbor]
 
+    print _layout.min_x
+    print _layout.max_x
+    print _layout.min_y
+    print _layout.max_y
+
     y = _layout.min_y
     while y <= _layout.max_y:
         items = []

@@ -1,6 +1,7 @@
 from position import Position
 
-DIST_TO_BORDER = 2
+NODE_WIDTH = 11
+NODE_HEIGHT = 3
 DIST_BETWEEN_NODES = 3
 
 
@@ -47,15 +48,16 @@ class Layout:
         if distance == 0:
             return [Position(0, 0)]
         if distance == 1:
-            distance = (2 * DIST_TO_BORDER) + DIST_BETWEEN_NODES + 1
-            return [Position(distance, 0),
-                    Position(0, -1 * distance),
-                    Position(-1 * distance, 0),
-                    Position(0, distance),
-                    Position(distance, -1 * distance),
-                    Position(-1 * distance, -1 * distance),
-                    Position(-1 * distance, distance),
-                    Position(distance, distance)]
+            width = (2 * int(NODE_WIDTH / 2)) + DIST_BETWEEN_NODES + 1
+            height = (2 * int(NODE_HEIGHT / 2)) + DIST_BETWEEN_NODES + 1
+            return [Position(width, 0),
+                    Position(0, -1 * height),
+                    Position(-1 * width, 0),
+                    Position(0, height),
+                    Position(width, -1 * height),
+                    Position(-1 * width, -1 * height),
+                    Position(-1 * width, height),
+                    Position(width, height)]
 
     def _choosePosition(self, startingPosition=None):
         if startingPosition is None:
@@ -84,10 +86,13 @@ class Layout:
         return p
 
     def _updateBounds(self, p):
-        minx = p.x - DIST_TO_BORDER
-        maxx = p.x + DIST_TO_BORDER
-        miny = p.y - DIST_TO_BORDER
-        maxy = p.y + DIST_TO_BORDER
+        width = (2 * int(NODE_WIDTH / 2))
+        height = (2 * int(NODE_HEIGHT / 2))
+
+        minx = p.x - (NODE_WIDTH / 2)
+        maxx = p.x + (NODE_WIDTH / 2)
+        miny = p.y - (NODE_HEIGHT / 2)
+        maxy = p.y + (NODE_HEIGHT / 2)
 
         if maxx > self.max_x:
             self.max_x = maxx

@@ -25,4 +25,6 @@ class TestGetLogicGetMoves(unittest.TestCase):
         l = layout.Layout()
         l.add('a', g.nodes)
         self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['a'])
-        self.assertEquals(position.Position(1, 0), l.nodeToPositionMap['b'])
+
+        # This depends on layout.DIST_TO_BORDER and DIST_BETWEEN_NODES
+        self.assertEquals(position.Position(7, 0), l.nodeToPositionMap['b'])

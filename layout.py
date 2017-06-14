@@ -1,5 +1,8 @@
 from position import Position
 
+DIST_TO_BORDER = 2
+DIST_BETWEEN_NODES = 3
+
 
 class Layout:
     def __init__(self):
@@ -44,14 +47,15 @@ class Layout:
         if distance == 0:
             return [Position(0, 0)]
         if distance == 1:
-            return [Position(1, 0),
-                    Position(0, -1),
-                    Position(-1, 0),
-                    Position(0, 1),
-                    Position(1, -1),
-                    Position(-1, -1),
-                    Position(-1, 1),
-                    Position(1, 1)]
+            distance = (2 * DIST_TO_BORDER) + DIST_BETWEEN_NODES
+            return [Position(distance, 0),
+                    Position(0, -1 * distance),
+                    Position(-1 * distance, 0),
+                    Position(0, distance),
+                    Position(distance, -1 * distance),
+                    Position(-1 * distance, -1 * distance),
+                    Position(-1 * distance, distance),
+                    Position(distance, distance)]
 
     def _choosePosition(self, startingPosition=None):
         if startingPosition is None:

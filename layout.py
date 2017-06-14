@@ -86,13 +86,10 @@ class Layout:
         return p
 
     def _updateBounds(self, p):
-        width = (2 * int(NODE_WIDTH / 2))
-        height = (2 * int(NODE_HEIGHT / 2))
-
-        minx = p.x - (NODE_WIDTH / 2)
-        maxx = p.x + (NODE_WIDTH / 2)
-        miny = p.y - (NODE_HEIGHT / 2)
-        maxy = p.y + (NODE_HEIGHT / 2)
+        minx = p.x - 1
+        maxx = p.x + NODE_WIDTH
+        miny = p.y - 1
+        maxy = p.y + NODE_HEIGHT
 
         if maxx > self.max_x:
             self.max_x = maxx

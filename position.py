@@ -13,3 +13,6 @@ class Position:
 
     def __str__(self):
         return str(self.x).rjust(3) + ' ' + str(self.y).rjust(3)
+
+    def __repr__(self):
+        return str(self.x).rjust(3) + ' ' + str(self.y).rjust(3)

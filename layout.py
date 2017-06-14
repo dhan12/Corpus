@@ -1,4 +1,3 @@
-from random import shuffle
 from position import Position
 
 
@@ -45,14 +44,14 @@ class Layout:
         if distance == 0:
             return [Position(0, 0)]
         if distance == 1:
-            return [Position(0, -1),
-                    Position(0, 1),
-                    Position(1, 0),
-                    Position(1, 1),
-                    Position(1, -1),
+            return [Position(1, 0),
+                    Position(0, -1),
                     Position(-1, 0),
+                    Position(0, 1),
+                    Position(1, -1),
+                    Position(-1, -1),
                     Position(-1, 1),
-                    Position(-1, -1)]
+                    Position(1, 1)]
 
     def _choosePosition(self, startingPosition=None):
         if startingPosition is None:
@@ -64,7 +63,6 @@ class Layout:
 
         distance = 1
         shifts = self._getAllShifts(distance)
-        shuffle(shifts)
 
         for s in shifts:
             p = Position(startingPosition.x + s.x, startingPosition.y + s.y)

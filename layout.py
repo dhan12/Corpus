@@ -30,6 +30,25 @@ class Layout:
         for neighborId in nodes[nodeId].neighbors:
             self._addNeighbor(nodeId, neighborId, nodes)
 
+    def normalize(self):
+        ''' Shift nodes to all non-negative values '''
+        positionToNodeMap = {}
+        nodeToPositionMap = {}
+
+        for n in self.nodeToPositionMap:
+            newp = Position(self.nodeToPositionMap[n].x - self.min_x,
+                            self.nodeToPositionMap[n].y - self.min_y)
+            positionToNodeMap[newp] = n
+            nodeToPositionMap[n] = newp
+
+        self.max_x = self.max_x - self.min_x
+        self.max_y = self.max_y - self.min_y
+        self.min_x = 0
+        self.min_y = 0
+
+        self.positionToNodeMap = positionToNodeMap
+        self.nodeToPositionMap = nodeToPositionMap
+
     def _addNeighbor(self, originId, neighborId, nodes):
         if self._hasNode(neighborId):
             return

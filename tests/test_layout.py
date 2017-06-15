@@ -28,3 +28,18 @@ class TestGetLogicGetMoves(unittest.TestCase):
 
         # This depends on parameters in layout (NODE_WIDTH, NODE_HEIGHT, ...)
         self.assertEquals(position.Position(16, 0), l.nodeToPositionMap['b'])
+
+    def test_horizontal_edge(self):
+        n = {'a': {}, 'b': {}}  # nodes
+        e = [{'a': 'a', 'b': 'b'}]  # edges
+        g = graph.Graph(n, e)
+
+        l = layout.Layout()
+        l.add('a', g.nodes)
+
+        # Check the path
+        self.assertEquals(4, len(l.edgePath[0]['path']))
+        self.assertEquals(position.Position(11, 1), l.edgePath[0]['path'][0])
+        self.assertEquals(position.Position(12, 1), l.edgePath[0]['path'][1])
+        self.assertEquals(position.Position(13, 1), l.edgePath[0]['path'][2])
+        self.assertEquals(position.Position(14, 1), l.edgePath[0]['path'][3])

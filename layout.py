@@ -10,6 +10,7 @@ class Layout:
 
         self.positionToNodeMap = {}
         self.nodeToPositionMap = {}
+        self.edgePath = []
 
         self.min_x = 0
         self.max_x = 0
@@ -50,18 +51,45 @@ class Layout:
         self.nodeToPositionMap = nodeToPositionMap
 
     def _addNeighbor(self, originId, neighborId, nodes):
-        if self._hasNode(neighborId):
-            return
 
-        p = self._choosePosition()
-        self.positionToNodeMap[p] = neighborId
-        self.nodeToPositionMap[neighborId] = p
+        # Give node a position
+        if not self._hasNode(neighborId):
+            p = self._choosePosition()
+            self.positionToNodeMap[p] = neighborId
+            self.nodeToPositionMap[neighborId] = p
 
+        # Add edge path between the nodes
+        startPos, endPos = self._getEdgeEnds(
+            self.nodeToPositionMap[originId],
+            self.nodeToPositionMap[neighborId])
+        self.edgePath.append({
+            'from': originId,
+            'to': neighborId,
+            'path': self._getPathBetweenPoints(startPos, endPos)})
+
+        # Add neighbors of neighbors
         for n2 in nodes[neighborId].neighbors:
             self._addNeighbor(neighborId, n2, nodes)
 
     def _hasNode(self, nodeId):
         return nodeId in self.nodeToPositionMap
+
+    def _getEdgeEnds(self, posA, posB):
+        # TODO improve this.
+        #      get candidate positions (un occupied points bordering each node)
+        #      find the pair of nodes that is closest to each other
+        fromA = Position(posA.x + NODE_WIDTH, posA.y + 1)
+        toB = Position(posB.x - 2, posA.y + 1)
+        return fromA, toB
+
+    def _getPathBetweenPoints(self, posA, posB):
+        # TODO improve this
+        #      do depth first search
+        #      (choosing next step based on decreased distance)
+        return [posA,
+                Position(posA.x + 1, posA.y),
+                Position(posA.x + 2, posA.y),
+                posB]
 
     def _getAllShifts(self, distance):
         if distance == 0:

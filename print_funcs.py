@@ -1,6 +1,15 @@
 import layout
 import position
 
+def fillText(text, length):
+
+    result = text[:length]
+
+    diff = length - len(result)
+    if diff > 0:
+        for _ in xrange(diff): 
+            result += ' '
+    return result
 
 def printOptions():
     print 'Choose option:'
@@ -73,6 +82,7 @@ def printGraph(g):
 
     for n in g.nodes:
         _layout.add(n, g.nodes)
+    _layout.normalize()
 
     for p in _layout.positionToNodeMap:
         print p, _layout.positionToNodeMap[p]
@@ -83,22 +93,56 @@ def printGraph(g):
             print _layout.nodeToPositionMap[n], \
                 _layout.nodeToPositionMap[neighbor]
 
-    print _layout.min_x
-    print _layout.max_x
-    print _layout.min_y
-    print _layout.max_y
+    print 'max_x: %d, max_y: %d' % (_layout.max_x, _layout.max_y)
 
-    y = _layout.min_y
-    while y <= _layout.max_y:
-        items = []
-        x = _layout.min_x
-        while x <= _layout.max_x:
+    # set up blank lines
+    lines = []
+    for y in xrange(_layout.max_y + 1):
+        lines.append('')
+        numLines = len(lines)
+        for x in xrange(_layout.max_x + 1):
+            lines[numLines - 1] += ' '
+
+    # add node text
+    for y in xrange(_layout.max_y + 1):
+        for x in xrange(_layout.max_x + 1):
             p = position.Position(x, y)
             try:
                 nodeId = _layout.positionToNodeMap[p]
-                items.append(nodeId[:5])
+
+                # Add text to put inside the node
+                # It just has the node id with a couple blank lines
+                lines[y] = lines[y][:x-1] + \
+                           '|' + fillText(nodeId, layout.NODE_WIDTH - 2) + '|' + \
+                           lines[y][x+layout.NODE_WIDTH:]
+
+                lines[y + 1] = lines[y + 1][:x-1] + \
+                           '|' + fillText('', layout.NODE_WIDTH - 2) + '|' + \
+                           lines[y + 1][x+layout.NODE_WIDTH:]
+
+                lines[y + 2] = lines[y + 2][:x-1] + \
+                           '|' + fillText('', layout.NODE_WIDTH - 2) + '|' + \
+                           lines[y + 2][x+layout.NODE_WIDTH:]
             except KeyError:
-                items.append(' ')
-            x = x + 1
-        print ''.join(items)
-        y = y + 1
+                pass
+
+    # add borders
+    borderStr =  '+' + ''.join(['-' for _ in xrange(layout.NODE_WIDTH - 2)]) + '+'
+    for y in xrange(_layout.max_y + 1):
+        for x in xrange(_layout.max_x + 1):
+            p = position.Position(x, y)
+            try:
+                nodeId = _layout.positionToNodeMap[p]
+
+                # top border
+                top = y -1
+                lines[top] = lines[top][:x-1] + borderStr + lines[top][x+10:]
+
+                # bottom border
+                bottom = y + layout.NODE_HEIGHT
+                lines[bottom] = lines[bottom][:x-1] + borderStr + lines[bottom][x+10:]
+            except KeyError:
+                pass
+                
+    for l in lines:
+        print l

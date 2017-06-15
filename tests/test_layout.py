@@ -27,4 +27,4 @@ class TestGetLogicGetMoves(unittest.TestCase):
         self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['a'])
 
         # This depends on parameters in layout (NODE_WIDTH, NODE_HEIGHT, ...)
-        self.assertEquals(position.Position(14, 0), l.nodeToPositionMap['b'])
+        self.assertEquals(position.Position(16, 0), l.nodeToPositionMap['b'])

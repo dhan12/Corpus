@@ -2,7 +2,7 @@ from position import Position
 
 NODE_WIDTH = 11
 NODE_HEIGHT = 3
-DIST_BETWEEN_NODES = 3
+DIST_BETWEEN_NODES = 5
 
 
 class Layout:

@@ -9,33 +9,34 @@ class TestGetLogicGetMoves(unittest.TestCase):
         pass
 
     def test_one_item(self):
-        n = {'a': {}}  # nodes
+        n = {'n1': {}}  # nodes
         e = []  # edges
         g = graph.Graph(n, e)
 
         l = layout.Layout()
-        l.add('a', g.nodes)
-        self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['a'])
+        l.add('n1', g.nodes)
+        self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['n1'])
 
     def test_two_items(self):
-        n = {'a': {}, 'b': {}}  # nodes
-        e = [{'a': 'a', 'b': 'b'}]  # edges
+        n = {'n1': {}, 'n2': {}}  # nodes
+        e = []  # edges
         g = graph.Graph(n, e)
 
         l = layout.Layout()
-        l.add('a', g.nodes)
-        self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['a'])
+        l.add('n1', g.nodes)
+        l.add('n2', g.nodes)
+        self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['n1'])
 
         # This depends on parameters in layout (NODE_WIDTH, NODE_HEIGHT, ...)
-        self.assertEquals(position.Position(16, 0), l.nodeToPositionMap['b'])
+        self.assertEquals(position.Position(16, 0), l.nodeToPositionMap['n2'])
 
     def test_horizontal_edge(self):
-        n = {'a': {}, 'b': {}}  # nodes
-        e = [{'a': 'a', 'b': 'b'}]  # edges
+        n = {'n1': {}, 'n2': {}}  # nodes
+        e = [{'a': 'n1', 'b': 'n2'}]  # edges
         g = graph.Graph(n, e)
 
         l = layout.Layout()
-        l.add('a', g.nodes)
+        l.add('n1', g.nodes)
 
         # Check the path
         self.assertEquals(4, len(l.edgePath[0]['path']))

@@ -44,3 +44,19 @@ class TestGetLogicGetMoves(unittest.TestCase):
         self.assertEquals(position.Position(12, 1), l.edgePath[0]['path'][1])
         self.assertEquals(position.Position(13, 1), l.edgePath[0]['path'][2])
         self.assertEquals(position.Position(14, 1), l.edgePath[0]['path'][3])
+
+    def test_vertical_edge(self):
+        n = {'n1': {}, 'n2': {}, 'n3': {}}  # nodes
+        e = [{'a': 'n1', 'b': 'n2'},
+             {'a': 'n1', 'b': 'n3'}]  # edges
+        g = graph.Graph(n, e)
+
+        l = layout.Layout()
+        l.add('n1', g.nodes)
+
+        # Check the path
+        self.assertEquals(4, len(l.edgePath[1]['path']))
+        self.assertEquals(position.Position(5, 3), l.edgePath[1]['path'][0])
+        self.assertEquals(position.Position(5, 4), l.edgePath[1]['path'][1])
+        self.assertEquals(position.Position(5, 5), l.edgePath[1]['path'][2])
+        self.assertEquals(position.Position(5, 6), l.edgePath[1]['path'][3])

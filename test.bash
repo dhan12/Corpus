@@ -36,7 +36,7 @@ fi
 # Unit tests
 #
 start_virtualenv
-python -m pytest tests
+python -m pytest -s tests
 rc=$?
 
 #

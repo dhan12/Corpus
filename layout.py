@@ -20,7 +20,7 @@ class Layout:
 
         self._width = 0
         self._length = 0
-        self._occupiedPoints = set()
+        self._occupiedNodePoints = set()
 
     def add(self, nodeId, nodes):
         if self._hasNode(nodeId):
@@ -79,23 +79,19 @@ class Layout:
         # Store position
         self.positionToNodeMap[p] = nodeId
         self.nodeToPositionMap[nodeId] = p
-        self._occupiedPoints.add(p)
+        self._occupiedNodePoints.add(p)
 
         # Mark used positions
         x = p.x - 1
         for xi in xrange(NODE_WIDTH):
             y = p.y - 1
             for yi in xrange(NODE_HEIGHT):
-                self._occupiedPoints.add(Position(x + xi, y + yi))
+                self._occupiedNodePoints.add(Position(x + xi, y + yi))
 
     def _hasNode(self, nodeId):
         return nodeId in self.nodeToPositionMap
 
     def _getEdgeEnds(self, posA, posB):
-        # TODO improve this.
-        #      get candidate positions (un occupied points bordering each node)
-        #      find the pair of nodes that is closest to each other
-
         ptsA = self._findMidOfBorders(posA)
         ptsB = self._findMidOfBorders(posB)
         fromA, toB = self._findClosestPair(ptsA, ptsB)
@@ -106,29 +102,62 @@ class Layout:
                 Position(pos.x + NODE_WIDTH, pos.y + (NODE_HEIGHT) / 2),
                 Position(pos.x + (NODE_WIDTH / 2), pos.y - 2),
                 Position(pos.x + (NODE_WIDTH / 2), pos.y + NODE_HEIGHT)]
-        return filter(lambda x: x not in self._occupiedPoints, poss)
+        return filter(lambda x: x not in self._occupiedNodePoints, poss)
 
     def _findClosestPair(self, ptsA, ptsB):
-        bestA = ptsA[0]
-        bestB = ptsB[0]
-        mindist = position.distance(bestA, bestB)
+        mindist = None
         for a in ptsA:
             for b in ptsB:
                 dist = position.distance(a, b)
-                if dist < mindist:
+                if (mindist is None) or (dist < mindist):
                     mindist = dist
                     bestA = a
                     bestB = b
+        if mindist is None:
+            raise Exception('Cannot find edge ends')
         return bestA, bestB
 
     def _getPathBetweenPoints(self, posA, posB):
-        # TODO improve this
-        #      do depth first search
-        #      (choosing next step based on decreased distance)
-        return [posA,
-                Position(posA.x + 1, posA.y),
-                Position(posA.x + 2, posA.y),
-                posB]
+        path = self._completePath([posA], posB)
+        if path:
+            return path
+        raise Exception('Cannot find path between points', posA, posB)
+
+    def _completePath(self, currentPath, finalPosition):
+        lastStep = currentPath[-1]
+        if lastStep == finalPosition:
+            return currentPath
+
+        maxPts = 1000
+        if len(currentPath) > maxPts:
+            raise Exception('currentPath > %d points (%s)' %
+                            (maxPts, str(currentPath)))
+
+        # Get possible moves
+        candidates = [Position(lastStep.x + 1, lastStep.y),
+                      Position(lastStep.x - 1, lastStep.y),
+                      Position(lastStep.x, lastStep.y + 1),
+                      Position(lastStep.x, lastStep.y - 1)]
+
+        # Eliminate bad moves
+        candidates = filter(
+                lambda x:
+                x not in currentPath and x not in self._occupiedNodePoints,
+                candidates)
+
+        # Prioritize possible moves
+        sortedItems = sorted(
+                candidates,
+                key=lambda pos: position.distance(pos, finalPosition))
+
+        # Recursively test possible path
+        for s in sortedItems:
+            currentPath.append(s)
+            if self._completePath(currentPath, finalPosition):
+                return currentPath
+            currentPath.drop()
+
+        return False
 
     def _getAllShifts(self, distance):
         if distance == 0:
@@ -137,13 +166,13 @@ class Layout:
             width = (2 * int(NODE_WIDTH / 2)) + DIST_BETWEEN_NODES + 1
             height = (2 * int(NODE_HEIGHT / 2)) + DIST_BETWEEN_NODES + 1
             return [Position(width, 0),
-                    Position(0, -1 * height),
-                    Position(-1 * width, 0),
                     Position(0, height),
+                    Position(-1 * width, 0),
+                    Position(0, -1 * height),
+                    Position(width, height),
                     Position(width, -1 * height),
-                    Position(-1 * width, -1 * height),
                     Position(-1 * width, height),
-                    Position(width, height)]
+                    Position(-1 * width, -1 * height)]
 
     def _choosePosition(self, startingPosition=None):
         if startingPosition is None:

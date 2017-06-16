@@ -1,4 +1,5 @@
 from position import Position
+import position
 
 NODE_WIDTH = 11
 NODE_HEIGHT = 3
@@ -19,14 +20,13 @@ class Layout:
 
         self._width = 0
         self._length = 0
+        self._occupiedPoints = set()
 
     def add(self, nodeId, nodes):
         if self._hasNode(nodeId):
             return
 
-        p = self._choosePosition()
-        self.positionToNodeMap[p] = nodeId
-        self.nodeToPositionMap[nodeId] = p
+        self._putNode(nodeId)
 
         for neighborId in nodes[nodeId].neighbors:
             self._addNeighbor(nodeId, neighborId, nodes)
@@ -54,9 +54,7 @@ class Layout:
 
         # Give node a position
         if not self._hasNode(neighborId):
-            p = self._choosePosition()
-            self.positionToNodeMap[p] = neighborId
-            self.nodeToPositionMap[neighborId] = p
+            self._putNode(neighborId)
 
         # Add edge path between the nodes
         startPos, endPos = self._getEdgeEnds(
@@ -71,6 +69,25 @@ class Layout:
         for n2 in nodes[neighborId].neighbors:
             self._addNeighbor(neighborId, n2, nodes)
 
+    def _putNode(self, nodeId):
+        if self._hasNode(nodeId):
+            return
+
+        # Find the position
+        p = self._choosePosition()
+
+        # Store position
+        self.positionToNodeMap[p] = nodeId
+        self.nodeToPositionMap[nodeId] = p
+        self._occupiedPoints.add(p)
+
+        # Mark used positions
+        x = p.x - 1
+        for xi in xrange(NODE_WIDTH):
+            y = p.y - 1
+            for yi in xrange(NODE_HEIGHT):
+                self._occupiedPoints.add(Position(x + xi, y + yi))
+
     def _hasNode(self, nodeId):
         return nodeId in self.nodeToPositionMap
 
@@ -78,9 +95,31 @@ class Layout:
         # TODO improve this.
         #      get candidate positions (un occupied points bordering each node)
         #      find the pair of nodes that is closest to each other
-        fromA = Position(posA.x + NODE_WIDTH, posA.y + 1)
-        toB = Position(posB.x - 2, posA.y + 1)
+
+        ptsA = self._findMidOfBorders(posA)
+        ptsB = self._findMidOfBorders(posB)
+        fromA, toB = self._findClosestPair(ptsA, ptsB)
         return fromA, toB
+
+    def _findMidOfBorders(self, pos):
+        poss = [Position(pos.x - 2, pos.y + (NODE_HEIGHT) / 2),
+                Position(pos.x + NODE_WIDTH, pos.y + (NODE_HEIGHT) / 2),
+                Position(pos.x + (NODE_WIDTH / 2), pos.y - 2),
+                Position(pos.x + (NODE_WIDTH / 2), pos.y + NODE_HEIGHT)]
+        return filter(lambda x: x not in self._occupiedPoints, poss)
+
+    def _findClosestPair(self, ptsA, ptsB):
+        bestA = ptsA[0]
+        bestB = ptsB[0]
+        mindist = position.distance(bestA, bestB)
+        for a in ptsA:
+            for b in ptsB:
+                dist = position.distance(a, b)
+                if dist < mindist:
+                    mindist = dist
+                    bestA = a
+                    bestB = b
+        return bestA, bestB
 
     def _getPathBetweenPoints(self, posA, posB):
         # TODO improve this

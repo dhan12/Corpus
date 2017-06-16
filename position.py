@@ -16,3 +16,8 @@ class Position:
 
     def __repr__(self):
         return 'Position(%d, %d)' % (self.x, self.y)
+
+
+def distance(a, b):
+    ''' Return an approximate distance. No diagonal moves. '''
+    return abs(a.x - b.x) + abs(a.y - b.y)

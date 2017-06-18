@@ -36,11 +36,19 @@ class Layout:
         positionToNodeMap = {}
         nodeToPositionMap = {}
 
+        # shift nodes
         for n in self.nodeToPositionMap:
             newp = Position(self.nodeToPositionMap[n].x - self.min_x,
                             self.nodeToPositionMap[n].y - self.min_y)
             positionToNodeMap[newp] = n
             nodeToPositionMap[n] = newp
+
+        # shift edge paths
+        for e in self.edgePath:
+            path = e['path']
+            for p in path:
+                p.x -= self.min_x
+                p.y -= self.min_y
 
         self.max_x = self.max_x - self.min_x
         self.max_y = self.max_y - self.min_y
@@ -60,10 +68,13 @@ class Layout:
         startPos, endPos = self._getEdgeEnds(
             self.nodeToPositionMap[originId],
             self.nodeToPositionMap[neighborId])
-        self.edgePath.append({
-            'from': originId,
-            'to': neighborId,
-            'path': self._getPathBetweenPoints(startPos, endPos)})
+        path = self._getPathBetweenPoints(startPos, endPos)
+        self.edgePath.append(
+                {'from': originId, 'to': neighborId, 'path': path})
+
+        # Update bounds
+        for p in path:
+            self._updateBounds(p)
 
         # Add neighbors of neighbors
         for n2 in nodes[neighborId].neighbors:
@@ -120,6 +131,8 @@ class Layout:
     def _getPathBetweenPoints(self, posA, posB):
         path = self._completePath([posA], posB)
         if path:
+            if len(path) <= 0:
+                raise Exception('Bad path between points', posA, posB)
             return path
         raise Exception('Cannot find path between points', posA, posB)
 

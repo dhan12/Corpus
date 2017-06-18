@@ -2,14 +2,14 @@ import layout
 import position
 
 
-def fillText(text, length):
+def fillArray(text, length):
 
-    result = text[:length]
+    result = list(text[:length])
 
     diff = length - len(result)
     if diff > 0:
         for _ in xrange(diff):
-            result += ' '
+            result.append(' ')
     return result
 
 
@@ -97,10 +97,10 @@ def printGraph(g):
 
     print 'max_x: %d, max_y: %d' % (_layout.max_x, _layout.max_y)
 
-    # set up blank lines
+    # set up blank canvas
     lines = []
     for y in xrange(_layout.max_y + 1):
-        lines.append('')
+        lines.append([])
         numLines = len(lines)
         for x in xrange(_layout.max_x + 1):
             lines[numLines - 1] += ' '
@@ -114,23 +114,22 @@ def printGraph(g):
 
                 # Add text to put inside the node
                 # It just has the node id with a couple blank lines
-                lines[y] = lines[y][:x - 1] + \
-                    '|' + fillText(nodeId, layout.NODE_WIDTH - 2) + '|' + \
+                lines[y] = lines[y][:x - 1] + ['|'] + \
+                    fillArray(nodeId, layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y][x + layout.NODE_WIDTH:]
 
-                lines[y + 1] = lines[y + 1][:x - 1] + \
-                    '|' + fillText('', layout.NODE_WIDTH - 2) + '|' + \
+                lines[y + 1] = lines[y + 1][:x - 1] + ['|'] + \
+                    fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y + 1][x + layout.NODE_WIDTH:]
 
-                lines[y + 2] = lines[y + 2][:x - 1] + \
-                    '|' + fillText('', layout.NODE_WIDTH - 2) + '|' + \
+                lines[y + 2] = lines[y + 2][:x - 1] + ['|'] + \
+                    fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y + 2][x + layout.NODE_WIDTH:]
             except KeyError:
                 pass
 
     # add borders
-    borderStr = '+' + \
-        ''.join(['-' for _ in xrange(layout.NODE_WIDTH - 2)]) + '+'
+    borderStr = ['+'] + ['-' for _ in xrange(layout.NODE_WIDTH - 2)] + ['+']
     for y in xrange(_layout.max_y + 1):
         for x in xrange(_layout.max_x + 1):
             p = position.Position(x, y)
@@ -149,5 +148,13 @@ def printGraph(g):
             except KeyError:
                 pass
 
+    # add edge paths
+    pathid = 0
+    for e in _layout.edgePath:
+        path = e['path']
+        for p in path:
+            lines[p.y][p.x] = str(pathid)
+        pathid += 1
+
     for l in lines:
-        print l
+        print ''.join(l)

@@ -103,28 +103,28 @@ def printGraph(g):
         lines.append([])
         numLines = len(lines)
         for x in xrange(_layout.max_x + 1):
-            lines[numLines - 1] += ' '
+            lines[numLines - 1].append(' ')
 
     # add node text
-    for y in xrange(_layout.max_y + 1):
-        for x in xrange(_layout.max_x + 1):
+    for y in xrange(_layout.max_y):
+        for x in xrange(_layout.max_x):
             p = position.Position(x, y)
             try:
                 nodeId = _layout.positionToNodeMap[p]
+                print nodeId, p, ''.join(lines[y + 1])
 
                 # Add text to put inside the node
                 # It just has the node id with a couple blank lines
-                lines[y] = lines[y][:x - 1] + ['|'] + \
+                lines[y + 1] = lines[y + 1][:x-1] + ['|'] + \
                     fillArray(nodeId, layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y][x + layout.NODE_WIDTH:]
-
-                lines[y + 1] = lines[y + 1][:x - 1] + ['|'] + \
+                lines[y + 2] = lines[y + 2][:x-1] + ['|'] + \
                     fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y + 1][x + layout.NODE_WIDTH:]
-
-                lines[y + 2] = lines[y + 2][:x - 1] + ['|'] + \
+                lines[y + 3] = lines[y + 3][:x-1] + ['|'] + \
                     fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y + 2][x + layout.NODE_WIDTH:]
+                print nodeId, p, ''.join(lines[y + 1])
             except KeyError:
                 pass
 
@@ -137,14 +137,13 @@ def printGraph(g):
                 nodeId = _layout.positionToNodeMap[p]
 
                 # top border
-                top = y - 1
-                lines[top] = lines[top][:x - 1] + \
-                    borderStr + lines[top][x + 10:]
+                lines[y] = lines[y][:x - 1] + \
+                    borderStr + lines[y][x + layout.NODE_WIDTH:]
 
                 # bottom border
                 bottom = y + layout.NODE_HEIGHT
                 lines[bottom] = lines[bottom][:x - 1] + \
-                    borderStr + lines[bottom][x + 10:]
+                    borderStr + lines[bottom][x + layout.NODE_WIDTH:]
             except KeyError:
                 pass
 
@@ -155,6 +154,6 @@ def printGraph(g):
         for p in path:
             lines[p.y][p.x] = str(pathid)
         pathid += 1
-
+    print '123456789a123456789b123456789c123456789d123456789e123456789f123456789g123456789h'
     for l in lines:
         print ''.join(l)

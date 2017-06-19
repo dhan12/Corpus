@@ -2,7 +2,7 @@ from position import Position
 import position
 
 NODE_WIDTH = 11
-NODE_HEIGHT = 3
+NODE_HEIGHT = 4
 DIST_BETWEEN_NODES = 5
 
 
@@ -93,11 +93,9 @@ class Layout:
         self._occupiedNodePoints.add(p)
 
         # Mark used positions
-        x = p.x - 1
         for xi in xrange(NODE_WIDTH):
-            y = p.y - 1
             for yi in xrange(NODE_HEIGHT):
-                self._occupiedNodePoints.add(Position(x + xi, y + yi))
+                self._occupiedNodePoints.add(Position(p.x + xi, p.y + yi))
 
     def _hasNode(self, nodeId):
         return nodeId in self.nodeToPositionMap
@@ -109,9 +107,9 @@ class Layout:
         return fromA, toB
 
     def _findMidOfBorders(self, pos):
-        poss = [Position(pos.x - 2, pos.y + (NODE_HEIGHT) / 2),
-                Position(pos.x + NODE_WIDTH, pos.y + (NODE_HEIGHT) / 2),
-                Position(pos.x + (NODE_WIDTH / 2), pos.y - 2),
+        poss = [Position(pos.x - 1, pos.y + (NODE_HEIGHT / 2)),
+                Position(pos.x + NODE_WIDTH, pos.y + (NODE_HEIGHT / 2)),
+                Position(pos.x + (NODE_WIDTH / 2), pos.y - 1),
                 Position(pos.x + (NODE_WIDTH / 2), pos.y + NODE_HEIGHT)]
         return filter(lambda x: x not in self._occupiedNodePoints, poss)
 
@@ -172,20 +170,36 @@ class Layout:
 
         return False
 
-    def _getAllShifts(self, distance):
+    def _getNearestNeighbor(self, start, distance):
+        if start is None:
+            start = Positon(0, 0)
+
+        width = NODE_WIDTH + DIST_BETWEEN_NODES
+        height = NODE_HEIGHT + DIST_BETWEEN_NODES
+
         if distance == 0:
-            return [Position(0, 0)]
+            return [Position(start.x, start.y)]
         if distance == 1:
-            width = (2 * int(NODE_WIDTH / 2)) + DIST_BETWEEN_NODES + 1
-            height = (2 * int(NODE_HEIGHT / 2)) + DIST_BETWEEN_NODES + 1
-            return [Position(width, 0),
-                    Position(0, height),
-                    Position(-1 * width, 0),
-                    Position(0, -1 * height),
-                    Position(width, height),
-                    Position(width, -1 * height),
-                    Position(-1 * width, height),
-                    Position(-1 * width, -1 * height)]
+            return [Position(start.x + width, start.y),
+                    Position(start.x, start.y + height),
+                    Position(start.x - width, start.y),
+                    Position(start.x, start.y - height)]
+        if distance == 2:
+            return [Position(start.x + width, start.y - height),
+                    Position(start.x - width, start.y - height),
+                    Position(start.x - width, start.y + height),
+                    Position(start.x + width, start.y + height),
+                    Position(start.x + (2 * width), start.y),
+                    Position(start.x, start.y + (2 * height)),
+                    Position(start.x - (2 * width), start.y),
+                    Position(start.x, start.y - (2 * height))]
+        if distance > 2:
+            width *= distance
+            height *= distance
+            return [Position(start.x + width, start.y),
+                    Position(start.x, start.y + height),
+                    Position(start.x - width, start.y),
+                    Position(start.x, start.y - height)]
 
     def _choosePosition(self, startingPosition=None):
         if startingPosition is None:
@@ -195,28 +209,30 @@ class Layout:
             self._updateBounds(startingPosition)
             return startingPosition
 
-        # TODO: increase distance until a point is found
-        distance = 1
-        shifts = self._getAllShifts(distance)
+        # increase distance until a point is found
+        found = False
+        for dist in xrange(5):
+            neighPositions = self._getNearestNeighbor(startingPosition, dist)
 
-        for s in shifts:
-            p = Position(startingPosition.x + s.x, startingPosition.y + s.y)
-            if p in self.positionToNodeMap:
-                continue
-            break
+            for p in neighPositions:
+                if p in self.positionToNodeMap:
+                    continue
+                found = True
+                break
+            if found:
+                break
 
-        if p is None:
-            print 'Board is full'
-            raise Exception('Board is full')
+        if not found:
+            raise Exception('Cant find position near %s', startingPosition)
 
         self._updateBounds(p)
 
         return p
 
     def _updateBounds(self, p):
-        minx = p.x - 1
+        minx = p.x
         maxx = p.x + NODE_WIDTH
-        miny = p.y - 1
+        miny = p.y
         maxy = p.y + NODE_HEIGHT
 
         if maxx > self.max_x:

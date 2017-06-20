@@ -115,13 +115,13 @@ def printGraph(g):
 
                 # Add text to put inside the node
                 # It just has the node id with a couple blank lines
-                lines[y + 1] = lines[y + 1][:x-1] + ['|'] + \
+                lines[y + 1] = lines[y + 1][:x] + ['|'] + \
                     fillArray(nodeId, layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y][x + layout.NODE_WIDTH:]
-                lines[y + 2] = lines[y + 2][:x-1] + ['|'] + \
+                lines[y + 2] = lines[y + 2][:x] + ['|'] + \
                     fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y + 1][x + layout.NODE_WIDTH:]
-                lines[y + 3] = lines[y + 3][:x-1] + ['|'] + \
+                lines[y + 3] = lines[y + 3][:x] + ['|'] + \
                     fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
                     lines[y + 2][x + layout.NODE_WIDTH:]
                 print nodeId, p, ''.join(lines[y + 1])
@@ -137,12 +137,12 @@ def printGraph(g):
                 nodeId = _layout.positionToNodeMap[p]
 
                 # top border
-                lines[y] = lines[y][:x - 1] + \
+                lines[y] = lines[y][:x] + \
                     borderStr + lines[y][x + layout.NODE_WIDTH:]
 
                 # bottom border
-                bottom = y + layout.NODE_HEIGHT
-                lines[bottom] = lines[bottom][:x - 1] + \
+                bottom = y + layout.NODE_HEIGHT - 1
+                lines[bottom] = lines[bottom][:x] + \
                     borderStr + lines[bottom][x + layout.NODE_WIDTH:]
             except KeyError:
                 pass
@@ -150,10 +150,11 @@ def printGraph(g):
     # add edge paths
     pathid = 0
     for e in _layout.edgePath:
+        print 'edge from %s to %s' % (e['from'], e['to'])
         path = e['path']
         for p in path:
             lines[p.y][p.x] = str(pathid)
         pathid += 1
-    print '123456789a123456789b123456789c123456789d123456789e123456789f123456789g123456789h'
+
     for l in lines:
         print ''.join(l)

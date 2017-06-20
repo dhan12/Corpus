@@ -21,6 +21,7 @@ class Layout:
         self._width = 0
         self._length = 0
         self._occupiedNodePoints = set()
+        self._occupiedEdgePoints = set()
 
     def add(self, nodeId, nodes):
         if self._hasNode(nodeId):
@@ -70,10 +71,11 @@ class Layout:
             self.nodeToPositionMap[neighborId])
         path = self._getPathBetweenPoints(startPos, endPos)
         self.edgePath.append(
-                {'from': originId, 'to': neighborId, 'path': path})
+            {'from': originId, 'to': neighborId, 'path': path})
 
         # Update bounds
         for p in path:
+            self._occupiedEdgePoints.add(p)
             self._updateBounds(p)
 
         # Add neighbors of neighbors
@@ -111,7 +113,12 @@ class Layout:
                 Position(pos.x + NODE_WIDTH, pos.y + (NODE_HEIGHT / 2)),
                 Position(pos.x + (NODE_WIDTH / 2), pos.y - 1),
                 Position(pos.x + (NODE_WIDTH / 2), pos.y + NODE_HEIGHT)]
-        return filter(lambda x: x not in self._occupiedNodePoints, poss)
+        poss = filter(
+            lambda x:
+            x not in self._occupiedNodePoints and
+            x not in self._occupiedEdgePoints,
+            poss)
+        return poss
 
     def _findClosestPair(self, ptsA, ptsB):
         mindist = None
@@ -152,14 +159,14 @@ class Layout:
 
         # Eliminate bad moves
         candidates = filter(
-                lambda x:
-                x not in currentPath and x not in self._occupiedNodePoints,
-                candidates)
+            lambda x:
+            x not in currentPath and x not in self._occupiedNodePoints,
+            candidates)
 
         # Prioritize possible moves
         sortedItems = sorted(
-                candidates,
-                key=lambda pos: position.distance(pos, finalPosition))
+            candidates,
+            key=lambda pos: position.distance(pos, finalPosition))
 
         # Recursively test possible path
         for s in sortedItems:

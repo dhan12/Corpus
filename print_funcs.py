@@ -80,11 +80,7 @@ def printNodes(boards, nodeMap):
 
 
 def printGraph(g):
-    _layout = layout.Layout()
-
-    for n in g.nodes:
-        _layout.add(n, g.nodes)
-    _layout.normalize()
+    _layout = layout.Layout(g.nodes)
 
     for p in _layout.positionToNodeMap:
         print p, _layout.positionToNodeMap[p]

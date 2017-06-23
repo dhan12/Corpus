@@ -13,8 +13,7 @@ class TestGetLogicGetMoves(unittest.TestCase):
         e = []  # edges
         g = graph.Graph(n, e)
 
-        l = layout.Layout()
-        l.add('n1', g.nodes)
+        l = layout.Layout(g.nodes)
         self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['n1'])
 
     def test_two_items(self):
@@ -22,9 +21,7 @@ class TestGetLogicGetMoves(unittest.TestCase):
         e = []  # edges
         g = graph.Graph(n, e)
 
-        l = layout.Layout()
-        l.add('n1', g.nodes)
-        l.add('n2', g.nodes)
+        l = layout.Layout(g.nodes)
         self.assertEquals(position.Position(0, 0), l.nodeToPositionMap['n1'])
 
         # This depends on parameters in layout (NODE_WIDTH, NODE_HEIGHT, ...)
@@ -35,8 +32,7 @@ class TestGetLogicGetMoves(unittest.TestCase):
         e = [{'a': 'n1', 'b': 'n2'}]  # edges
         g = graph.Graph(n, e)
 
-        l = layout.Layout()
-        l.add('n1', g.nodes)
+        l = layout.Layout(g.nodes)
 
         # Check the path
         self.assertEquals(5, len(l.edgePath[0]['path']))
@@ -52,8 +48,7 @@ class TestGetLogicGetMoves(unittest.TestCase):
              {'a': 'n1', 'b': 'n3'}]  # edges
         g = graph.Graph(n, e)
 
-        l = layout.Layout()
-        l.add('n1', g.nodes)
+        l = layout.Layout(g.nodes)
 
         # n3 should be under n1
         self.assertEquals(position.Position(0, 0),
@@ -77,8 +72,7 @@ class TestGetLogicGetMoves(unittest.TestCase):
              {'a': 'n2', 'b': 'n3'}]  # edges
         g = graph.Graph(n, e)
 
-        l = layout.Layout()
-        l.add('n1', g.nodes)
+        l = layout.Layout(g.nodes)
 
         # n2 and n3 are diagonal from each other
         self.assertEquals(

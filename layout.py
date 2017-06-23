@@ -7,8 +7,9 @@ DIST_BETWEEN_NODES = 5
 
 
 class Layout:
-    def __init__(self):
+    def __init__(self, nodes):
 
+        self._nodes = nodes
         self.positionToNodeMap = {}
         self.nodeToPositionMap = {}
         self.edgePath = []
@@ -23,16 +24,20 @@ class Layout:
         self._occupiedNodePoints = set()
         self._occupiedEdgePoints = set()
 
-    def add(self, nodeId, nodes):
+        for n in self._nodes:
+            self._add(n)
+        self._normalize()
+
+    def _add(self, nodeId):
         if self._hasNode(nodeId):
             return
 
         self._putNode(nodeId)
 
-        for neighborId in nodes[nodeId].neighbors:
-            self._addNeighbor(nodeId, neighborId, nodes)
+        for neighborId in self._nodes[nodeId].neighbors:
+            self._addNeighbor(nodeId, neighborId)
 
-    def normalize(self):
+    def _normalize(self):
         ''' Shift nodes to all non-negative values '''
         positionToNodeMap = {}
         nodeToPositionMap = {}
@@ -59,7 +64,7 @@ class Layout:
         self.positionToNodeMap = positionToNodeMap
         self.nodeToPositionMap = nodeToPositionMap
 
-    def _addNeighbor(self, originId, neighborId, nodes):
+    def _addNeighbor(self, originId, neighborId):
 
         # Give node a position
         if not self._hasNode(neighborId):
@@ -79,8 +84,8 @@ class Layout:
             self._updateBounds(p)
 
         # Add neighbors of neighbors
-        for n2 in nodes[neighborId].neighbors:
-            self._addNeighbor(neighborId, n2, nodes)
+        for n2 in self._nodes[neighborId].neighbors:
+            self._addNeighbor(neighborId, n2)
 
     def _putNode(self, nodeId):
         if self._hasNode(nodeId):

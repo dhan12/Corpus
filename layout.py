@@ -87,6 +87,10 @@ class Layout:
         return nodeId in self.nodeToPositionMap
 
     def _addNodes(self):
+        # Maintain a FIFO queue of nodes to add.
+        # Use this queue to a depth first search, ie. add a node,
+        #   then all its immediate neighbors,
+        #   then neighbors of those neighbors ...
         self._addqueue = collections.deque()
 
         for n in self._nodes:
@@ -106,7 +110,7 @@ class Layout:
                 originId = item['originId']
                 nodeId = item['nodeId']
                 if originId:
-                    self._addNeighbor(originId, nodeId)
+                    self._putNode(nodeId, self.nodeToPositionMap[originId])
                 else:
                     self._putNode(nodeId)
 
@@ -118,12 +122,6 @@ class Layout:
 
             except IndexError:
                 break
-
-    def _addNeighbor(self, originId, neighborId):
-
-        # Give node a position
-        if not self._hasNode(neighborId):
-            self._putNode(neighborId, self.nodeToPositionMap[originId])
 
     def _putNode(self, nodeId, startingPosition=None):
         if self._hasNode(nodeId):
@@ -147,7 +145,6 @@ class Layout:
             startingPosition = Position(0, 0)
 
         if startingPosition not in self.positionToNodeMap:
-            self._updateBounds(startingPosition)
             return startingPosition
 
         # increase distance until a point is found
@@ -196,10 +193,17 @@ class Layout:
         if distance > 2:
             width *= distance
             height *= distance
-            return [Position(start.x + width, start.y),
-                    Position(start.x, start.y + height),
-                    Position(start.x - width, start.y),
-                    Position(start.x, start.y - height)]
+
+            if (self.max_x - self._min_x) > (self.max_y - self._min_y):
+                return [Position(start.x, start.y + height),
+                        Position(start.x, start.y - height),
+                        Position(start.x + width, start.y),
+                        Position(start.x - width, start.y)]
+            else:
+                return [Position(start.x + width, start.y),
+                        Position(start.x - width, start.y),
+                        Position(start.x, start.y + height),
+                        Position(start.x, start.y - height)]
 
     #
     # Add edge functions

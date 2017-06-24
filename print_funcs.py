@@ -149,7 +149,8 @@ def printGraph(g):
         print 'edge from %s to %s' % (e['from'], e['to'])
         path = e['path']
         for p in path:
-            lines[p.y][p.x] = str(pathid)
+            if lines[p.y][p.x] == ' ':
+                lines[p.y][p.x] = str(pathid)
         pathid += 1
 
     for l in lines:

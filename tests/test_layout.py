@@ -69,6 +69,7 @@ class TestGetLogicGetMoves(unittest.TestCase):
     def test_turn_edge(self):
         n = {'n1': {}, 'n2': {}, 'n3': {}}  # nodes
         e = [{'a': 'n1', 'b': 'n2'},
+             {'a': 'n1', 'b': 'n3'},
              {'a': 'n2', 'b': 'n3'}]  # edges
         g = graph.Graph(n, e)
 
@@ -76,13 +77,13 @@ class TestGetLogicGetMoves(unittest.TestCase):
 
         # n2 and n3 are diagonal from each other
         self.assertEquals(
-                position.Position(
-                    layout.NODE_WIDTH + layout.DIST_BETWEEN_NODES, 0),
-                l.nodeToPositionMap['n2'])
+            position.Position(
+                layout.NODE_WIDTH + layout.DIST_BETWEEN_NODES, 0),
+            l.nodeToPositionMap['n2'])
         self.assertEquals(
-                position.Position(
-                    0, layout.NODE_HEIGHT + layout.DIST_BETWEEN_NODES),
-                l.nodeToPositionMap['n3'])
+            position.Position(
+                0, layout.NODE_HEIGHT + layout.DIST_BETWEEN_NODES),
+            l.nodeToPositionMap['n3'])
 
         # TODO : improve path validation.
         # Should improve by manually selecting positions in grid

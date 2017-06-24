@@ -1,3 +1,4 @@
+import collections
 from position import Position
 import position
 
@@ -7,35 +8,35 @@ DIST_BETWEEN_NODES = 5
 
 
 class Layout:
-    def __init__(self, nodes):
+    '''
+    A layout is composed of nodes and edges.
 
-        self._nodes = nodes
+    The nodes are positioned at a given x,y position. From that position,
+        the node will reserve an area of NODE_WIDTH x NODE_HEIGHT.
+
+    Edges define paths between associated nodes.
+    '''
+
+    def __init__(self, nodes):
+        # "public"
         self.positionToNodeMap = {}
         self.nodeToPositionMap = {}
         self.edgePath = []
-
-        self.min_x = 0
         self.max_x = 0
-        self.min_y = 0
         self.max_y = 0
 
-        self._width = 0
-        self._length = 0
+        # "private"
+        self._min_x = 0
+        self._min_y = 0
+
         self._occupiedNodePoints = set()
         self._occupiedEdgePoints = set()
 
-        for n in self._nodes:
-            self._add(n)
+        # Construct the layout (add nodes and edges)
+        self._nodes = nodes
+        self._addNodes()
+        self._addEdges()
         self._normalize()
-
-    def _add(self, nodeId):
-        if self._hasNode(nodeId):
-            return
-
-        self._putNode(nodeId)
-
-        for neighborId in self._nodes[nodeId].neighbors:
-            self._addNeighbor(nodeId, neighborId)
 
     def _normalize(self):
         ''' Shift nodes to all non-negative values '''
@@ -44,8 +45,8 @@ class Layout:
 
         # shift nodes
         for n in self.nodeToPositionMap:
-            newp = Position(self.nodeToPositionMap[n].x - self.min_x,
-                            self.nodeToPositionMap[n].y - self.min_y)
+            newp = Position(self.nodeToPositionMap[n].x - self._min_x,
+                            self.nodeToPositionMap[n].y - self._min_y)
             positionToNodeMap[newp] = n
             nodeToPositionMap[n] = newp
 
@@ -53,23 +54,162 @@ class Layout:
         for e in self.edgePath:
             path = e['path']
             for p in path:
-                p.x -= self.min_x
-                p.y -= self.min_y
+                p.x -= self._min_x
+                p.y -= self._min_y
 
-        self.max_x = self.max_x - self.min_x
-        self.max_y = self.max_y - self.min_y
-        self.min_x = 0
-        self.min_y = 0
+        self.max_x = self.max_x - self._min_x
+        self.max_y = self.max_y - self._min_y
+        self._min_x = 0
+        self._min_y = 0
 
         self.positionToNodeMap = positionToNodeMap
         self.nodeToPositionMap = nodeToPositionMap
+
+    def _updateBounds(self, p):
+        minx = p.x
+        maxx = p.x + NODE_WIDTH
+        miny = p.y
+        maxy = p.y + NODE_HEIGHT
+
+        if maxx > self.max_x:
+            self.max_x = maxx
+        if minx < self._min_x:
+            self._min_x = minx
+        if miny < self._min_y:
+            self._min_y = miny
+        if maxy > self.max_y:
+            self.max_y = maxy
+
+    #
+    # Add node functions
+    #
+    def _hasNode(self, nodeId):
+        return nodeId in self.nodeToPositionMap
+
+    def _addNodes(self):
+        self._addqueue = collections.deque()
+
+        for n in self._nodes:
+            self._addqueue.append({
+                'nodeId': n,
+                'originId': None})
+            self._addNextNode()
+
+    def _addNextNode(self):
+        while True:
+            try:
+                item = self._addqueue.popleft()
+                nodeId = item['nodeId']
+                if self._hasNode(nodeId):
+                    continue
+
+                originId = item['originId']
+                nodeId = item['nodeId']
+                if originId:
+                    self._addNeighbor(originId, nodeId)
+                else:
+                    self._putNode(nodeId)
+
+                for neighborId in self._nodes[nodeId].neighbors:
+                    self._addqueue.append({
+                        'originId': nodeId,
+                        'nodeId': neighborId
+                    })
+
+            except IndexError:
+                break
 
     def _addNeighbor(self, originId, neighborId):
 
         # Give node a position
         if not self._hasNode(neighborId):
-            self._putNode(neighborId)
+            self._putNode(neighborId, self.nodeToPositionMap[originId])
 
+    def _putNode(self, nodeId, startingPosition=None):
+        if self._hasNode(nodeId):
+            return
+
+        # Find the position
+        p = self._choosePosition(startingPosition)
+
+        # Store position
+        self.positionToNodeMap[p] = nodeId
+        self.nodeToPositionMap[nodeId] = p
+        self._occupiedNodePoints.add(p)
+
+        # Mark used positions
+        for xi in xrange(NODE_WIDTH):
+            for yi in xrange(NODE_HEIGHT):
+                self._occupiedNodePoints.add(Position(p.x + xi, p.y + yi))
+
+    def _choosePosition(self, startingPosition=None):
+        if startingPosition is None:
+            startingPosition = Position(0, 0)
+
+        if startingPosition not in self.positionToNodeMap:
+            self._updateBounds(startingPosition)
+            return startingPosition
+
+        # increase distance until a point is found
+        found = False
+        for dist in xrange(5):
+            neighPositions = self._getNearestNeighbor(startingPosition, dist)
+
+            for p in neighPositions:
+                if p in self.positionToNodeMap:
+                    continue
+                found = True
+                break
+            if found:
+                break
+
+        if not found:
+            raise Exception('Cant find position near %s', startingPosition)
+
+        self._updateBounds(p)
+
+        return p
+
+    def _getNearestNeighbor(self, start, distance):
+        if start is None:
+            start = Positon(0, 0)
+
+        width = NODE_WIDTH + DIST_BETWEEN_NODES
+        height = NODE_HEIGHT + DIST_BETWEEN_NODES
+
+        if distance == 0:
+            return [Position(start.x, start.y)]
+        if distance == 1:
+            return [Position(start.x + width, start.y),
+                    Position(start.x, start.y + height),
+                    Position(start.x - width, start.y),
+                    Position(start.x, start.y - height)]
+        if distance == 2:
+            return [Position(start.x + width, start.y - height),
+                    Position(start.x - width, start.y - height),
+                    Position(start.x - width, start.y + height),
+                    Position(start.x + width, start.y + height),
+                    Position(start.x + (2 * width), start.y),
+                    Position(start.x, start.y + (2 * height)),
+                    Position(start.x - (2 * width), start.y),
+                    Position(start.x, start.y - (2 * height))]
+        if distance > 2:
+            width *= distance
+            height *= distance
+            return [Position(start.x + width, start.y),
+                    Position(start.x, start.y + height),
+                    Position(start.x - width, start.y),
+                    Position(start.x, start.y - height)]
+
+    #
+    # Add edge functions
+    #
+    def _addEdges(self):
+        for n in self._nodes:
+            for neighborId in self._nodes[n].neighbors:
+                self._addEdge(n, neighborId)
+
+    def _addEdge(self, originId, neighborId):
         # Add edge path between the nodes
         startPos, endPos = self._getEdgeEnds(
             self.nodeToPositionMap[originId],
@@ -82,30 +222,6 @@ class Layout:
         for p in path:
             self._occupiedEdgePoints.add(p)
             self._updateBounds(p)
-
-        # Add neighbors of neighbors
-        for n2 in self._nodes[neighborId].neighbors:
-            self._addNeighbor(neighborId, n2)
-
-    def _putNode(self, nodeId):
-        if self._hasNode(nodeId):
-            return
-
-        # Find the position
-        p = self._choosePosition()
-
-        # Store position
-        self.positionToNodeMap[p] = nodeId
-        self.nodeToPositionMap[nodeId] = p
-        self._occupiedNodePoints.add(p)
-
-        # Mark used positions
-        for xi in xrange(NODE_WIDTH):
-            for yi in xrange(NODE_HEIGHT):
-                self._occupiedNodePoints.add(Position(p.x + xi, p.y + yi))
-
-    def _hasNode(self, nodeId):
-        return nodeId in self.nodeToPositionMap
 
     def _getEdgeEnds(self, posA, posB):
         ptsA = self._findMidOfBorders(posA)
@@ -181,80 +297,3 @@ class Layout:
             currentPath.drop()
 
         return False
-
-    def _getNearestNeighbor(self, start, distance):
-        if start is None:
-            start = Positon(0, 0)
-
-        width = NODE_WIDTH + DIST_BETWEEN_NODES
-        height = NODE_HEIGHT + DIST_BETWEEN_NODES
-
-        if distance == 0:
-            return [Position(start.x, start.y)]
-        if distance == 1:
-            return [Position(start.x + width, start.y),
-                    Position(start.x, start.y + height),
-                    Position(start.x - width, start.y),
-                    Position(start.x, start.y - height)]
-        if distance == 2:
-            return [Position(start.x + width, start.y - height),
-                    Position(start.x - width, start.y - height),
-                    Position(start.x - width, start.y + height),
-                    Position(start.x + width, start.y + height),
-                    Position(start.x + (2 * width), start.y),
-                    Position(start.x, start.y + (2 * height)),
-                    Position(start.x - (2 * width), start.y),
-                    Position(start.x, start.y - (2 * height))]
-        if distance > 2:
-            width *= distance
-            height *= distance
-            return [Position(start.x + width, start.y),
-                    Position(start.x, start.y + height),
-                    Position(start.x - width, start.y),
-                    Position(start.x, start.y - height)]
-
-    def _choosePosition(self, startingPosition=None):
-        if startingPosition is None:
-            startingPosition = Position(0, 0)
-
-        if startingPosition not in self.positionToNodeMap:
-            self._updateBounds(startingPosition)
-            return startingPosition
-
-        # increase distance until a point is found
-        found = False
-        for dist in xrange(5):
-            neighPositions = self._getNearestNeighbor(startingPosition, dist)
-
-            for p in neighPositions:
-                if p in self.positionToNodeMap:
-                    continue
-                found = True
-                break
-            if found:
-                break
-
-        if not found:
-            raise Exception('Cant find position near %s', startingPosition)
-
-        self._updateBounds(p)
-
-        return p
-
-    def _updateBounds(self, p):
-        minx = p.x
-        maxx = p.x + NODE_WIDTH
-        miny = p.y
-        maxy = p.y + NODE_HEIGHT
-
-        if maxx > self.max_x:
-            self.max_x = maxx
-        if minx < self.min_x:
-            self.min_x = minx
-        if miny < self.min_y:
-            self.min_y = miny
-        if maxy > self.max_y:
-            self.max_y = maxy
-
-        self._width = self.max_x - self.min_x
-        self._length = self.max_y - self.min_y

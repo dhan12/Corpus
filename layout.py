@@ -144,21 +144,22 @@ class Layout:
         if startingPosition is None:
             startingPosition = Position(0, 0)
 
-        if startingPosition not in self.positionToNodeMap:
-            return startingPosition
-
-        # increase distance until a point is found
         found = False
-        for dist in xrange(5):
-            neighPositions = self._getNearestNeighbor(startingPosition, dist)
+        if startingPosition not in self.positionToNodeMap:
+            p = startingPosition
+            found = True
+        else:
+            # increase distance until a point is found
+            for dist in xrange(5):
+                neighPositions = self._getNearestNeighbor(startingPosition, dist)
 
-            for p in neighPositions:
-                if p in self.positionToNodeMap:
-                    continue
-                found = True
-                break
-            if found:
-                break
+                for p in neighPositions:
+                    if p in self.positionToNodeMap:
+                        continue
+                    found = True
+                    break
+                if found:
+                    break
 
         if not found:
             raise Exception('Cant find position near %s', startingPosition)

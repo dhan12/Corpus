@@ -17,6 +17,10 @@ class Graph():
             graphNodes[n] = GraphNode(n)
 
         for e in edges:
-            graphNodes[e['a']].neighbors.append(e['b'])
+            try:
+                graphNodes[e['a']].neighbors.append(e['b'])
+            except KeyError as e:
+                raise Exception('Failed to find node for edge. Error: %s' %
+                                (e, ))
 
         self.nodes = graphNodes

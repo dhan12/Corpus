@@ -1,0 +1,47 @@
+{
+  "edges": 
+  [
+    {
+      "a": "football",
+      "b": "ny-giants",
+      "relationship": "directional",
+      "description": "is one team"
+    },{
+      "a": "football",
+      "b": "ny-jets",
+      "relationship": "directional",
+      "description": "is one team"
+    },{
+      "a": "football",
+      "b": "dallas-cowboys",
+      "relationship": "directional",
+      "description": "is one team"
+    },{
+      "a": "football",
+      "b": "seattle-seahawks",
+      "relationship": "directional",
+      "description": "is one team"
+    },{
+      "a": "basketball",
+      "b": "ny-knicks",
+      "relationship": "directional",
+      "description": "is one team"
+    },{
+      "a": "basketball",
+      "b": "boston-celtics",
+      "relationship": "directional",
+      "description": "is one team"
+    },{
+      "a": "basketball",
+      "b": "brooklyn-nets",
+      "relationship": "directional",
+      "description": "is one team"
+    },{
+      "a": "basketball",
+      "b": "milwakee-bucks",
+      "relationship": "directional",
+      "description": "is one team"
+    }
+  ]
+}
+

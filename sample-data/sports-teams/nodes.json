@@ -1,0 +1,56 @@
+{
+  "nodes": 
+  [
+    {
+      "id": "football",
+      "title": "Football",
+      "tags": [],
+      "data": "A game you play with a ball and your foot."
+    },{
+      "id": "ny-giants",
+      "title": "NY Giants",
+      "tags": [],
+      "data": "The New York Giants"
+    },{
+      "id": "ny-jets",
+      "title": "NY Jets",
+      "tags": [],
+      "data": "Another New York football team. Da Jets!"
+    },{
+      "id": "dallas-cowboys",
+      "title": "Dallas Cowboys",
+      "tags": [],
+      "data": "Known as America's Team, The Dallas Cowboys"
+    },{
+      "id": "seattle-seahawks",
+      "title": "Seattle Seahawks",
+      "tags": [],
+      "data": "The Seattle Seahawks!"
+    },{
+      "id": "basketball",
+      "title": "Basketball",
+      "tags": [],
+      "data": "A game you play with a ball and a basket"
+    },{
+      "id": "ny-knicks",
+      "title": "NY Knicks",
+      "tags": [],
+      "data": "The New York Knicks, (Knickerbockers)"
+    },{
+      "id": "brooklyn-nets",
+      "title": "Brooklyn Nets",
+      "tags": [],
+      "data": "The Brooklyn Nets, formerly from New Jersey"
+    },{
+      "id": "boston-celtics",
+      "title": "Boston Celtics",
+      "tags": [],
+      "data": "The Boston Celtics"
+    },{
+      "id": "milwakee-bucks",
+      "title": "Milwakee Bucks",
+      "tags": [],
+      "data": "The Milwakee Bucks, Fear the Deer"
+    }
+  ]
+}

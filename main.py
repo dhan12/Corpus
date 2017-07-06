@@ -36,7 +36,7 @@ def initData(dataDir):
 
 
 def loadData():
-    boards, nodeMap, edges = initData('../Corpus-cpp-data/')
+    boards, nodeMap, edges = initData('sample-data/sports-teams/')
     g = Graph(nodeMap, edges)
     return boards, edges, nodeMap, g
 

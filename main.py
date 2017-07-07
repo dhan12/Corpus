@@ -35,15 +35,18 @@ def initData(dataDir):
     return boards, nodeMap, edges
 
 
-def loadData():
-    boards, nodeMap, edges = initData('sample-data/sports-teams/')
+def loadData(dataSet='sample-data/sports-teams/'):
+    boards, nodeMap, edges = initData(dataSet)
     g = Graph(nodeMap, edges)
     return boards, edges, nodeMap, g
 
 
 if __name__ == '__main__':
 
-    boards, edges, nodeMap, g = loadData()
+    try:
+        boards, edges, nodeMap, g = loadData(sys.argv[1])
+    except:
+        boards, edges, nodeMap, g = loadData()
 
     while True:
         print_funcs.printOptions()

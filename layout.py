@@ -150,7 +150,7 @@ class Layout:
             found = True
         else:
             # increase distance until a point is found
-            for dist in xrange(5):
+            for dist in xrange(10):
                 neighPositions = self._getNearestNeighbor(startingPosition, dist)
 
                 for p in neighPositions:
@@ -244,6 +244,10 @@ class Layout:
             x not in self._occupiedNodePoints and
             x not in self._occupiedEdgePoints,
             poss)
+        if len(poss) == 0:
+            # TODO: find a better value for this,
+            #       we are just re-using this point for now
+            poss = [Position(pos.x - 1, pos.y + (NODE_HEIGHT / 2))]
         return poss
 
     def _findClosestPair(self, ptsA, ptsB):

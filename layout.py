@@ -7,6 +7,16 @@ NODE_HEIGHT = 4
 DIST_BETWEEN_NODES = 5
 
 
+def layoutNodeSort(a, b):
+    ''' Sort layout nodes. '''
+    if a['fixedPosition'] is None and b['fixedPosition'] is not None:
+        return 1
+    elif a['fixedPosition'] is not None and b['fixedPosition'] is None:
+        return -1
+
+    return b['numNeighbors'] - a['numNeighbors']
+
+
 class Layout:
     '''
     A layout is composed of nodes and edges.
@@ -14,10 +24,13 @@ class Layout:
     The nodes are positioned at a given x,y position. From that position,
         the node will reserve an area of NODE_WIDTH x NODE_HEIGHT.
 
+    The positionMap gives the position of one or more nodes.
+    Layout will fix the nodes to those positions.
+
     Edges define paths between associated nodes.
     '''
 
-    def __init__(self, nodes):
+    def __init__(self, nodes, positionMap={}):
         # "public"
         self.positionToNodeMap = {}
         self.nodeToPositionMap = {}
@@ -31,6 +44,18 @@ class Layout:
 
         self._occupiedNodePoints = set()
         self._occupiedEdgePoints = set()
+
+        # Get order of nodes to place into the layout
+        orderedNodes = []
+        for n in nodes:
+            orderedNodes.append({
+                'id': n,
+                'fixedPosition': positionMap[n]
+                if (n in positionMap)
+                else None,
+                'numNeighbors': len(nodes[n].neighbors)
+            })
+        self._orderedNodes = sorted(orderedNodes, cmp=layoutNodeSort)
 
         # Construct the layout (add nodes and edges)
         self._nodes = nodes
@@ -93,9 +118,9 @@ class Layout:
         #   then neighbors of those neighbors ...
         self._addqueue = collections.deque()
 
-        for n in self._nodes:
+        for n in self._orderedNodes:
             self._addqueue.append({
-                'nodeId': n,
+                'nodeId': n['id'],
                 'originId': None})
             self._addNextNode()
 
@@ -151,7 +176,8 @@ class Layout:
         else:
             # increase distance until a point is found
             for dist in xrange(10):
-                neighPositions = self._getNearestNeighbor(startingPosition, dist)
+                neighPositions = self._getNearestNeighbor(startingPosition,
+                                                          dist)
 
                 for p in neighPositions:
                     if p in self.positionToNodeMap:

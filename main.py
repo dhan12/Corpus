@@ -30,23 +30,26 @@ def initData(dataDir):
 
             if 'nodes' in data:
                 _nodes = data['nodes']
+
+            if 'positions' in data:
+                positionMap = data['positions']
     for n in _nodes:
         nodeMap[n['id']] = n
-    return boards, nodeMap, edges
+    return boards, nodeMap, edges, positionMap
 
 
 def loadData(dataSet='sample-data/sports-teams/'):
-    boards, nodeMap, edges = initData(dataSet)
+    boards, nodeMap, edges, positionMap = initData(dataSet)
     g = Graph(nodeMap, edges)
-    return boards, edges, nodeMap, g
+    return boards, edges, nodeMap, g, positionMap
 
 
 if __name__ == '__main__':
 
     if len(sys.argv) > 1:
-        boards, edges, nodeMap, g = loadData(sys.argv[1])
+        boards, edges, nodeMap, g, positionMap = loadData(sys.argv[1])
     else:
-        boards, edges, nodeMap, g = loadData()
+        boards, edges, nodeMap, g, positionMap = loadData()
 
     while True:
         print_funcs.printOptions()
@@ -58,7 +61,7 @@ if __name__ == '__main__':
         if line == 'n':
             print_funcs.printNodes(boards, nodeMap)
         if line == 'g':
-            print_funcs.printGraph(g)
+            print_funcs.printGraph(g, positionMap)
         if line == 'r':
             boards, edges, nodeMap, g = loadData()
             print 'Data reloaded'

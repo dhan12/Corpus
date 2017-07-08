@@ -79,8 +79,8 @@ def printNodes(boards, nodeMap):
             (item['title'], item['id'], item['data'][:25].replace('\n', ' '))
 
 
-def printGraph(g):
-    _layout = layout.Layout(g.nodes)
+def printGraph(g, positionMap):
+    _layout = layout.Layout(g.nodes, positionMap)
 
     for p in _layout.positionToNodeMap:
         print p, _layout.positionToNodeMap[p]

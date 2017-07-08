@@ -87,3 +87,24 @@ class TestGetLogicGetMoves(unittest.TestCase):
 
         # TODO : improve path validation.
         # Should improve by manually selecting positions in grid
+
+
+class TestLayoutNodeSort(unittest.TestCase):
+    def setUp(self):
+        pass
+
+    def test_fixedPositionNode_isFirst(self):
+        nodes = []
+        nodes.append({'id': 'a', 'fixedPosition': None, 'numNeighbors': 0})
+        nodes.append({'id': 'b', 'fixedPosition': {}, 'numNeighbors': 0})
+        result = sorted(nodes, cmp=layout.layoutNodeSort)
+
+        self.assertEquals('b', result[0]['id'])
+
+    def test_mostNeighbors_isFirst(self):
+        nodes = []
+        nodes.append({'id': 'a', 'fixedPosition': {}, 'numNeighbors': 0})
+        nodes.append({'id': 'b', 'fixedPosition': {}, 'numNeighbors': 999})
+        result = sorted(nodes, cmp=layout.layoutNodeSort)
+
+        self.assertEquals('b', result[0]['id'])

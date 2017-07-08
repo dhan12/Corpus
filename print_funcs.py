@@ -113,13 +113,13 @@ def printGraph(g, positionMap):
                 # It just has the node id with a couple blank lines
                 lines[y + 1] = lines[y + 1][:x] + ['|'] + \
                     fillArray(nodeId, layout.NODE_WIDTH - 2) + ['|'] + \
-                    lines[y][x + layout.NODE_WIDTH:]
+                    lines[y + 1][x + layout.NODE_WIDTH:]
                 lines[y + 2] = lines[y + 2][:x] + ['|'] + \
                     fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
-                    lines[y + 1][x + layout.NODE_WIDTH:]
+                    lines[y + 2][x + layout.NODE_WIDTH:]
                 lines[y + 3] = lines[y + 3][:x] + ['|'] + \
                     fillArray('', layout.NODE_WIDTH - 2) + ['|'] + \
-                    lines[y + 2][x + layout.NODE_WIDTH:]
+                    lines[y + 3][x + layout.NODE_WIDTH:]
                 print nodeId, p, ''.join(lines[y + 1])
             except KeyError:
                 pass

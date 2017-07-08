@@ -121,7 +121,7 @@ class Layout:
         for n in self._orderedNodes:
             self._addqueue.append({
                 'nodeId': n['id'],
-                'originId': None})
+                'originPosition': n['fixedPosition']})
             self._addNextNode()
 
     def _addNextNode(self):
@@ -132,17 +132,16 @@ class Layout:
                 if self._hasNode(nodeId):
                     continue
 
-                originId = item['originId']
                 nodeId = item['nodeId']
-                if originId:
-                    self._putNode(nodeId, self.nodeToPositionMap[originId])
+                if 'originPosition' in item:
+                    self._putNode(nodeId, item['originPosition'])
                 else:
                     self._putNode(nodeId)
 
                 for neighborId in self._nodes[nodeId].neighbors:
                     self._addqueue.append({
-                        'originId': nodeId,
-                        'nodeId': neighborId
+                        'nodeId': neighborId,
+                        'originPosition': self.nodeToPositionMap[nodeId]
                     })
 
             except IndexError:

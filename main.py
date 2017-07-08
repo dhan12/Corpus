@@ -11,8 +11,12 @@ from position import Position
 def initData(dataDir):
     boards = []
     edges = []
+
+    nodes = []
     nodeMap = {}
-    _nodes = []
+
+    positions = []
+    positionMap = {}
 
     for filename in os.listdir(dataDir):
         inputFile = os.path.join(dataDir, filename)
@@ -29,11 +33,15 @@ def initData(dataDir):
                 edges += data['edges']
 
             if 'nodes' in data:
-                _nodes = data['nodes']
+                nodes += data['nodes']
 
             if 'positions' in data:
-                positionMap = data['positions']
-    for n in _nodes:
+                positions += data['positions']
+
+    for p in positions:
+        positionMap[p['id']] = Position(p['x'], p['y'])
+
+    for n in nodes:
         nodeMap[n['id']] = n
     return boards, nodeMap, edges, positionMap
 

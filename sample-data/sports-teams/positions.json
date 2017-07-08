@@ -1,12 +1,17 @@
 {
-  "positions": 
-  {
-    "football":
+  "positions":
+  [
     {
+      "id": "football",
       "x": 0,
       "y": 0
+    },
+    {
+      "id": "basketball",
+      "x": 52,
+      "y": 6
     }
-  }
+  ]
 }
 
 

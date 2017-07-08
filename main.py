@@ -43,9 +43,9 @@ def loadData(dataSet='sample-data/sports-teams/'):
 
 if __name__ == '__main__':
 
-    try:
+    if len(sys.argv) > 1:
         boards, edges, nodeMap, g = loadData(sys.argv[1])
-    except:
+    else:
         boards, edges, nodeMap, g = loadData()
 
     while True:

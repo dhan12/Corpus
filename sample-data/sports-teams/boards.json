@@ -2,14 +2,11 @@
     "boards": 
     [
         {
-            "id": "learning-cpp",
-            "title": "Learning C++",
-            "tags": ["C++"],
-            "data": "Use this to study and learn C++",
-            "members": ["keywords",
-                        "cpp-types", "user-defined-types", "fundamental-types",
-                        "wchar-t", 
-                        "source-code", "static-library", "dynamic-library"]
+            "id": "sports-teams",
+            "title": "A sample board showing sports teams",
+            "tags": [""],
+            "data": "Use this to see how corpus boards and data are displayed",
+            "members": ["basketball", "football"]
         }
     ]
 }

@@ -63,7 +63,7 @@ if __name__ == '__main__':
         print_funcs.printOptions()
         line = sys.stdin.readline()[:-1]
         if line == 'b':
-            print_funcs.printBoards(boards)
+            print_funcs.printBoards(boards, nodeMap)
         if line == 'e':
             print_funcs.printEdges(boards, nodeMap, edges)
         if line == 'n':
@@ -71,7 +71,7 @@ if __name__ == '__main__':
         if line == 'g':
             print_funcs.printGraph(g, positionMap)
         if line == 'r':
-            boards, edges, nodeMap, g = loadData()
+            boards, edges, nodeMap, g, positionMap = loadData()
             print 'Data reloaded'
         if line == 'q':
             break

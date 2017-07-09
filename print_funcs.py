@@ -23,7 +23,7 @@ def printOptions():
     print "'q' to quit"
 
 
-def printBoards(boards):
+def printBoards(boards, nodeMap):
     numBoards = len(boards)
     for i in range(numBoards):
         print 'Board title: ' + boards[i]['title']
